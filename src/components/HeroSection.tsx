@@ -40,17 +40,17 @@ const HeroSection = () => {
           <Button 
             size="lg" 
             className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-4 animate-pulse-glow"
-            onClick={() => scrollToSection('solution')}
+            onClick={() => scrollToSection('mission-control')}
           >
-            View Solution Loop
+            Launch Mission Control
           </Button>
           <Button 
             variant="outline" 
             size="lg"
             className="border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8 py-4"
-            onClick={() => scrollToSection('monitoring')}
+            onClick={() => scrollToSection('solution')}
           >
-            Explore Dashboard
+            View Solution Loop
           </Button>
         </div>
       </div>

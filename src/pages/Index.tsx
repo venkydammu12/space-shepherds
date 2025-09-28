@@ -5,6 +5,7 @@ import SolutionSection from '@/components/SolutionSection';
 import ImpactSection from '@/components/ImpactSection';
 import MonitoringSection from '@/components/MonitoringSection';
 import CallToActionSection from '@/components/CallToActionSection';
+import MissionControl from '@/components/MissionControl';
 
 const Index = () => {
   return (
@@ -14,7 +15,9 @@ const Index = () => {
       <ProblemSection />
       <SolutionSection />
       <ImpactSection />
-      <MonitoringSection />
+      <div id="mission-control">
+        <MissionControl />
+      </div>
       <CallToActionSection />
     </div>
   );
