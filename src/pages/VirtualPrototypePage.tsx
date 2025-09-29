@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, ArrowRight, Bot, Mic, MicOff, Volume2, VolumeX,
-  Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target,
-  Monitor, Globe, Satellite, Activity, AlertCircle, CheckCircle
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bot, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import * as THREE from 'three';

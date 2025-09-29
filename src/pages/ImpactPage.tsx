@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Home, Globe, Leaf, Users, Target, TrendingUp, Heart, Zap, Shield } from 'lucide-react';
+import { ArrowLeft, Chrome as Home, Globe, Leaf, Users, Target, TrendingUp, Heart, Zap, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const ImpactPage = () => {
