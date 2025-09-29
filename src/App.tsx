@@ -6,9 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import ProblemPage from "./pages/ProblemPage";
 import SolutionPage from "./pages/SolutionPage";
-import MissionControlPage from "./pages/MissionControlPage";
-import RobotPrototypePage from "./pages/RobotPrototypePage";
-import OptimizationPage from "./pages/OptimizationPage";
+import VirtualPrototypePage from "./pages/VirtualPrototypePage";
 import ImpactPage from "./pages/ImpactPage";
 import NotFound from "./pages/NotFound";
 
@@ -24,9 +22,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/problem" element={<ProblemPage />} />
           <Route path="/solution" element={<SolutionPage />} />
-          <Route path="/mission-control" element={<MissionControlPage />} />
-          <Route path="/robot-prototype" element={<RobotPrototypePage />} />
-          <Route path="/optimization" element={<OptimizationPage />} />
+          <Route path="/virtual-prototype" element={<VirtualPrototypePage />} />
           <Route path="/impact" element={<ImpactPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

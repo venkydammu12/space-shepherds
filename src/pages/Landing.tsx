@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Zap, Target, Globe } from 'lucide-react';
+import { ChevronRight, Zap, Target, Globe, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import WaterRippleBackground from '@/components/WaterRippleBackground';
@@ -10,6 +10,7 @@ const Landing = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [logoComplete, setLogoComplete] = useState(false);
   const [showOverview, setShowOverview] = useState(false);
+  const [showLogoDetail, setShowLogoDetail] = useState(false);
   const navigate = useNavigate();
 
   const handleLogoComplete = () => {
@@ -19,6 +20,10 @@ const Landing = () => {
 
   const handleGetIn = () => {
     setShowOverview(true);
+  };
+
+  const handleLogoClick = () => {
+    setShowLogoDetail(true);
   };
 
   const navigationCards = [
@@ -37,11 +42,18 @@ const Landing = () => {
       color: "primary"
     },
     {
-      title: "Mission Control",
-      description: "Live monitoring and control dashboard",
+      title: "Virtual Prototype",
+      description: "Interactive AI robot and mission control",
       icon: Globe,
-      path: "/mission-control", 
+      path: "/virtual-prototype", 
       color: "accent"
+    },
+    {
+      title: "Global Impact",
+      description: "SDGs alignment and sustainability goals",
+      icon: Target,
+      path: "/impact",
+      color: "primary"
     }
   ];
 
@@ -65,7 +77,10 @@ const Landing = () => {
             animate={{ opacity: 1 }}
             className="fixed top-8 left-8 z-40"
           >
-            <div className="flex items-center gap-3 p-3 rounded-xl glass-card border border-primary/30">
+            <div 
+              className="flex items-center gap-3 p-3 rounded-xl glass-card border border-primary/30 cursor-pointer hover:border-primary hover:shadow-glow transition-all"
+              onClick={handleLogoClick}
+            >
               <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
                 <Zap className="w-4 h-4 text-primary" />
               </div>
@@ -74,6 +89,76 @@ const Landing = () => {
                 <div className="text-xs text-muted-foreground">ROBOTICS</div>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Logo Detail Modal */}
+      <AnimatePresence>
+        {showLogoDetail && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center p-8"
+            onClick={() => setShowLogoDetail(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="relative max-w-2xl w-full hologram-box rounded-3xl p-12 text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4"
+                onClick={() => setShowLogoDetail(false)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+              
+              <motion.div
+                animate={{ 
+                  boxShadow: [
+                    '0 0 60px hsl(180 100% 60% / 0.4)',
+                    '0 0 120px hsl(180 100% 60% / 0.8)',
+                    '0 0 60px hsl(180 100% 60% / 0.4)',
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-32 h-32 mx-auto mb-8 rounded-2xl border-2 border-primary bg-background/20 backdrop-blur-md flex items-center justify-center"
+              >
+                <Zap className="w-16 h-16 text-primary" />
+              </motion.div>
+              
+              <h2 className="text-4xl font-bold hero-title mb-4">AI SWARM ROBOTICS</h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Advanced autonomous space debris cleanup system powered by artificial intelligence and swarm robotics technology.
+              </p>
+              
+              <div className="text-center mb-6">
+                <p className="text-primary font-medium mb-4">Do you want to explore our project in detail?</p>
+                <div className="flex gap-4 justify-center">
+                  <Button 
+                    onClick={() => {
+                      setShowLogoDetail(false);
+                      setShowOverview(true);
+                    }}
+                    className="bg-primary hover:bg-primary/90 text-black"
+                  >
+                    Yes, Let's Explore
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setShowLogoDetail(false)}
+                  >
+                    Maybe Later
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -130,10 +215,10 @@ const Landing = () => {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => navigate('/mission-control')}
+                  onClick={() => navigate('/virtual-prototype')}
                   className="border-accent text-accent hover:bg-accent/10 px-8 py-4 text-lg"
                 >
-                  Launch Control
+                  Virtual Prototype
                   <Globe className="w-5 h-5 ml-2" />
                 </Button>
               </motion.div>
