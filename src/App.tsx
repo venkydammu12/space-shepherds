@@ -3,7 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import Landing from "./pages/Landing";
+import ProblemPage from "./pages/ProblemPage";
+import SolutionPage from "./pages/SolutionPage";
+import MissionControlPage from "./pages/MissionControlPage";
+import RobotPrototypePage from "./pages/RobotPrototypePage";
+import OptimizationPage from "./pages/OptimizationPage";
+import ImpactPage from "./pages/ImpactPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,8 +21,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/problem" element={<ProblemPage />} />
+          <Route path="/solution" element={<SolutionPage />} />
+          <Route path="/mission-control" element={<MissionControlPage />} />
+          <Route path="/robot-prototype" element={<RobotPrototypePage />} />
+          <Route path="/optimization" element={<OptimizationPage />} />
+          <Route path="/impact" element={<ImpactPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
