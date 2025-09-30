@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog } from 'lucide-react';
+import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog, Rocket, Home, Eye, Monitor, Radar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import SpaceBackground from '@/components/SpaceBackground';
@@ -11,6 +11,7 @@ const Landing = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [logoComplete, setLogoComplete] = useState(false);
   const [showNavigation, setShowNavigation] = useState(false);
+  const [showMainNav, setShowMainNav] = useState(false);
   const [showLogoDetail, setShowLogoDetail] = useState(false);
   const navigate = useNavigate();
 
@@ -20,13 +21,56 @@ const Landing = () => {
   };
 
   const handleLetsGetIn = () => {
-    setShowNavigation(!showNavigation);
+    setShowMainNav(!showMainNav);
   };
 
   const handleLogoClick = () => {
     setShowLogoDetail(true);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    if (sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Navigate to specific pages if section doesn't exist on current page
+        switch (sectionId) {
+          case 'problem':
+            navigate('/problem');
+            break;
+          case 'solution':
+            navigate('/solution');
+            break;
+          case 'virtual-robot':
+            navigate('/virtual-prototype');
+            break;
+          case 'dashboard':
+            navigate('/mission-control');
+            break;
+          case 'impact':
+            navigate('/impact');
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    setShowMainNav(false);
+  };
+
+  const mainNavItems = [
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'problem', label: 'Problem', icon: Target },
+    { id: 'solution', label: 'Solution Loop', icon: Zap },
+    { id: 'virtual-robot', label: 'Virtual Robot', icon: Users },
+    { id: 'robot-eye', label: 'Robot Eye', icon: Eye },
+    { id: 'dashboard', label: 'Dashboard', icon: Monitor },
+    { id: 'robo-scan', label: 'Robo Scan & Control', icon: Radar },
+    { id: 'impact', label: 'Impact', icon: Globe }
+  ];
   const navigationCards = [
     {
       title: "Problem",
@@ -107,43 +151,108 @@ const Landing = () => {
             {/* Let's Get In Button */}
             <Button
               onClick={handleLetsGetIn}
-              className="bg-primary hover:bg-primary/90 text-black font-bold px-6 py-3 rounded-xl"
+              className="bg-primary hover:bg-primary/90 text-black font-bold px-8 py-4 rounded-xl text-lg shadow-glow"
             >
-              <Menu className="w-4 h-4 mr-2" />
-              Let's Get In
+              <Rocket className="w-5 h-5 mr-3" />
+              🚀 Let's Get In
             </Button>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Main Professional Navigation Bar */}
+      <AnimatePresence>
+        {showMainNav && logoComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="fixed top-0 left-0 right-0 z-50 bg-background/10 backdrop-blur-md border-b border-primary/20"
+            style={{ backdropFilter: 'blur(20px)' }}
+          >
+            <div className="container mx-auto px-6">
+              <nav className="flex items-center justify-between py-4">
+                {/* Logo */}
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={logoImage}
+                    alt="AI Swarm Robotics"
+                    className="w-10 h-10 object-contain"
+                  />
+                  <span className="text-lg font-bold text-primary">AI Swarm Robotics</span>
+                </div>
+
+                {/* Navigation Items */}
+                <div className="hidden md:flex items-center gap-8">
+                  {mainNavItems.map((item, index) => (
+                    <motion.button
+                      key={item.id}
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      onClick={() => scrollToSection(item.id)}
+                      className="group relative flex items-center gap-2 text-white/90 hover:text-primary transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-primary/10"
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span className="text-sm font-medium">{item.label}</span>
+                      
+                      {/* Hover underline animation */}
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                    </motion.button>
+                  ))}
+                </div>
+
+                {/* Mobile Menu Button */}
+                <div className="md:hidden">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowNavigation(!showNavigation)}
+                    className="text-white hover:text-primary"
+                  >
+                    <Menu className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {/* Close Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowMainNav(false)}
+                  className="text-white/70 hover:text-primary"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </nav>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Navigation Menu */}
       <AnimatePresence>
-        {showNavigation && logoComplete && (
+        {showNavigation && logoComplete && showMainNav && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 left-8 right-8 z-30"
+            className="fixed top-20 left-8 right-8 z-40 md:hidden"
           >
             <div className="hologram-box rounded-2xl p-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {navigationCards.map((card, index) => (
+              <div className="grid grid-cols-2 gap-4">
+                {mainNavItems.map((item, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className="glass-card p-4 rounded-xl hover-scale cursor-pointer text-center"
-                    onClick={() => {
-                      navigate(card.path);
-                      setShowNavigation(false);
-                    }}
+                    onClick={() => scrollToSection(item.id)}
                   >
-                    <div className={`w-10 h-10 rounded-lg bg-${card.color}/20 flex items-center justify-center mx-auto mb-3`}>
-                      <card.icon className={`w-5 h-5 text-${card.color}`} />
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center mx-auto mb-3">
+                      <item.icon className="w-5 h-5 text-primary" />
                     </div>
-                    <h3 className="text-sm font-bold mb-1">{card.title}</h3>
-                    <p className="text-xs text-muted-foreground">{card.description}</p>
+                    <h3 className="text-sm font-bold">{item.label}</h3>
                   </motion.div>
                 ))}
               </div>
@@ -151,6 +260,7 @@ const Landing = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
       {/* Logo Detail Modal */}
       <AnimatePresence>
         {showLogoDetail && (
@@ -227,12 +337,12 @@ const Landing = () => {
 
       {/* Main Content */}
       <AnimatePresence>
-        {!showIntro && (
+        {!showIntro && !showMainNav && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: 'easeOut' }}
-            className="relative z-10 min-h-screen flex flex-col items-center justify-center p-8"
+            className={`relative z-10 min-h-screen flex flex-col items-center justify-center p-8 transition-all duration-500`}
           >
             {/* Hero Section */}
             <div className="text-center max-w-6xl mx-auto mb-16">
@@ -297,6 +407,19 @@ const Landing = () => {
               ))}
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Overlay when navigation is open */}
+      <AnimatePresence>
+        {showMainNav && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/50 backdrop-blur-sm z-30"
+            onClick={() => setShowMainNav(false)}
+          />
         )}
       </AnimatePresence>
 
