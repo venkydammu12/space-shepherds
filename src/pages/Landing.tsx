@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Zap, Target, Globe, X } from 'lucide-react';
+import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import SpaceBackground from '@/components/SpaceBackground';
@@ -10,7 +10,7 @@ import logoImage from '@/assets/logo.png';
 const Landing = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [logoComplete, setLogoComplete] = useState(false);
-  const [showOverview, setShowOverview] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(false);
   const [showLogoDetail, setShowLogoDetail] = useState(false);
   const navigate = useNavigate();
 
@@ -19,8 +19,8 @@ const Landing = () => {
     setTimeout(() => setShowIntro(false), 500);
   };
 
-  const handleGetIn = () => {
-    setShowOverview(true);
+  const handleLetsGetIn = () => {
+    setShowNavigation(!showNavigation);
   };
 
   const handleLogoClick = () => {
@@ -29,32 +29,46 @@ const Landing = () => {
 
   const navigationCards = [
     {
-      title: "The Problem",
+      title: "Problem",
       description: "Space debris crisis threatening our orbital future",
       icon: Target,
       path: "/problem",
       color: "destructive"
     },
     {
-      title: "Our Solution",  
+      title: "Solution",  
       description: "AI Swarm Robotics for autonomous cleanup",
       icon: Zap,
       path: "/solution",
       color: "primary"
     },
     {
-      title: "Virtual Prototype",
-      description: "Interactive AI robot and mission control",
-      icon: Globe,
-      path: "/virtual-prototype", 
+      title: "Loop",
+      description: "Interactive solution process visualization",
+      icon: Cog,
+      path: "/solution",
       color: "accent"
     },
     {
-      title: "Global Impact",
+      title: "Impact",
       description: "SDGs alignment and sustainability goals",
-      icon: Target,
+      icon: Globe,
       path: "/impact",
       color: "primary"
+    },
+    {
+      title: "Team",
+      description: "Meet our expert development team",
+      icon: Users,
+      path: "/team",
+      color: "accent"
+    },
+    {
+      title: "Prototype",
+      description: "Interactive AI robot and mission control",
+      icon: Target,
+      path: "/virtual-prototype", 
+      color: "accent"
     }
   ];
 
@@ -70,14 +84,15 @@ const Landing = () => {
         )}
       </AnimatePresence>
 
-      {/* Logo in Corner (after animation) */}
+      {/* Top Navigation Bar */}
       <AnimatePresence>
         {logoComplete && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed top-8 left-8 z-40"
+            className="fixed top-8 left-8 right-8 z-40 flex justify-between items-center"
           >
+            {/* Logo in Corner */}
             <div 
               className="flex items-center gap-3 p-3 rounded-xl glass-card border border-primary/30 cursor-pointer hover:border-primary hover:shadow-glow transition-all"
               onClick={handleLogoClick}
@@ -88,10 +103,54 @@ const Landing = () => {
                 className="w-12 h-12 object-contain"
               />
             </div>
+
+            {/* Let's Get In Button */}
+            <Button
+              onClick={handleLetsGetIn}
+              className="bg-primary hover:bg-primary/90 text-black font-bold px-6 py-3 rounded-xl"
+            >
+              <Menu className="w-4 h-4 mr-2" />
+              Let's Get In
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Navigation Menu */}
+      <AnimatePresence>
+        {showNavigation && logoComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-24 left-8 right-8 z-30"
+          >
+            <div className="hologram-box rounded-2xl p-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {navigationCards.map((card, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="glass-card p-4 rounded-xl hover-scale cursor-pointer text-center"
+                    onClick={() => {
+                      navigate(card.path);
+                      setShowNavigation(false);
+                    }}
+                  >
+                    <div className={`w-10 h-10 rounded-lg bg-${card.color}/20 flex items-center justify-center mx-auto mb-3`}>
+                      <card.icon className={`w-5 h-5 text-${card.color}`} />
+                    </div>
+                    <h3 className="text-sm font-bold mb-1">{card.title}</h3>
+                    <p className="text-xs text-muted-foreground">{card.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Logo Detail Modal */}
       <AnimatePresence>
         {showLogoDetail && (
@@ -147,7 +206,7 @@ const Landing = () => {
                   <Button 
                     onClick={() => {
                       setShowLogoDetail(false);
-                      setShowOverview(true);
+                      setShowNavigation(true);
                     }}
                     className="bg-primary hover:bg-primary/90 text-black"
                   >
@@ -241,69 +300,6 @@ const Landing = () => {
         )}
       </AnimatePresence>
 
-      {/* Project Overview Modal */}
-      <AnimatePresence>
-        {showOverview && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/80 backdrop-blur-md z-50 flex items-center justify-center p-8"
-            onClick={() => setShowOverview(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="max-w-4xl w-full hologram-box rounded-3xl p-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold hero-title mb-4">
-                  Project Overview
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  Explore our revolutionary AI swarm robotics solution for space debris cleanup
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-6 mb-8">
-                {navigationCards.map((card, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="glass-card p-6 rounded-xl hover-scale cursor-pointer"
-                    onClick={() => navigate(card.path)}
-                  >
-                    <div className={`w-12 h-12 rounded-xl bg-${card.color}/20 flex items-center justify-center mb-4`}>
-                      <card.icon className={`w-6 h-6 text-${card.color}`} />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2">{card.title}</h3>
-                    <p className="text-muted-foreground text-sm">{card.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="flex justify-center gap-4">
-                <Button
-                  onClick={() => navigate('/problem')}
-                  className="bg-primary hover:bg-primary/90 text-black"
-                >
-                  Start Exploration
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowOverview(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
