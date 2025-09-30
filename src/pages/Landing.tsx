@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog, Rocket, Home, Eye, Monitor, Radar } from 'lucide-react';
+import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog, Rocket, Chrome as Home, Eye, Monitor, Radar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import SpaceBackground from '@/components/SpaceBackground';
