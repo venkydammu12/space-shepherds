@@ -56,11 +56,11 @@ const CinematicLogo = ({ onAnimationComplete }: CinematicLogoProps) => {
         '0 0 60px hsl(180 100% 60% / 0.4)',
         '0 0 120px hsl(180 100% 60% / 0.8)',
         '0 0 60px hsl(180 100% 60% / 0.4)',
-      ] as any,
+      ],
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: 'easeInOut'
+        ease: [0.4, 0, 0.2, 1]
       }
     }
   };
@@ -76,8 +76,18 @@ const CinematicLogo = ({ onAnimationComplete }: CinematicLogoProps) => {
     >
       <motion.div
         className="relative p-8 rounded-2xl border-2 border-primary bg-background/20 backdrop-blur-md"
-        variants={glowVariants}
-        animate="active"
+        animate={{
+          boxShadow: [
+            '0 0 60px hsl(180 100% 60% / 0.4)',
+            '0 0 120px hsl(180 100% 60% / 0.8)',
+            '0 0 60px hsl(180 100% 60% / 0.4)',
+          ]
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
       >
         {/* Rotating Light Rings */}
         <div className="absolute inset-[-20px] rounded-full border border-primary/30 animate-spin" 

@@ -180,9 +180,9 @@ const Landing = () => {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="text-6xl md:text-8xl font-bold hero-title mb-6"
               >
-                SPACE DEBRIS
+                AI SWARM
                 <br />
-                <span className="text-accent">CLEANUP</span>
+                <span className="text-primary glow-text">ROBOTICS</span>
               </motion.h1>
               
               <motion.p
@@ -191,35 +191,23 @@ const Landing = () => {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
               >
-                Autonomous orbital debris cleanup using AI-powered swarm robotics.
-                <br />
-                <span className="text-primary">The future of safe space exploration starts here.</span>
+                Autonomous Orbital Debris Cleanup
               </motion.p>
 
-              {/* CTA Buttons */}
+              {/* CTA Button */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
+                className="flex justify-center"
               >
                 <Button
                   size="lg"
-                  onClick={handleGetIn}
-                  className="bg-primary hover:bg-primary/90 text-black font-bold px-8 py-4 text-lg"
+                  onClick={() => navigate('/mission-control')}
+                  className="bg-primary hover:bg-primary/90 text-black font-bold px-12 py-6 text-xl rounded-xl shadow-glow"
                 >
-                  Let's Get In
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
-                
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => navigate('/virtual-prototype')}
-                  className="border-accent text-accent hover:bg-accent/10 px-8 py-4 text-lg"
-                >
-                  Virtual Prototype
-                  <Globe className="w-5 h-5 ml-2" />
+                  Launch Mission Control
+                  <Zap className="w-6 h-6 ml-3" />
                 </Button>
               </motion.div>
             </div>
