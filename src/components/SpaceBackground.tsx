@@ -9,13 +9,15 @@ const SpaceBackground = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.0008);
+
     const camera = new THREE.PerspectiveCamera(
-      75,
+      60,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
-    camera.position.z = 3;
+    camera.position.set(0, 0, 50);
 
     const renderer = new THREE.WebGLRenderer({ 
       alpha: true, 
@@ -25,149 +27,197 @@ const SpaceBackground = () => {
     renderer.setPixelRatio(window.devicePixelRatio);
     containerRef.current.appendChild(renderer.domElement);
 
-    // Create Earth
-    const earthGeometry = new THREE.SphereGeometry(1, 64, 64);
-    
-    // Earth texture (using gradient for realistic look)
-    const earthCanvas = document.createElement('canvas');
-    earthCanvas.width = 2048;
-    earthCanvas.height = 1024;
-    const ctx = earthCanvas.getContext('2d')!;
-    
-    // Create Earth-like gradient
-    const gradient = ctx.createLinearGradient(0, 0, 2048, 1024);
-    gradient.addColorStop(0, '#0a1628');
-    gradient.addColorStop(0.3, '#1e3a5f');
-    gradient.addColorStop(0.5, '#2563eb');
-    gradient.addColorStop(0.7, '#1e3a5f');
-    gradient.addColorStop(1, '#0a1628');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 2048, 1024);
-    
-    // Add continents pattern
-    ctx.fillStyle = '#1a4d2e';
-    for (let i = 0; i < 50; i++) {
-      const x = Math.random() * 2048;
-      const y = Math.random() * 1024;
-      const radius = Math.random() * 100 + 50;
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    const earthTexture = new THREE.CanvasTexture(earthCanvas);
-    
-    const earthMaterial = new THREE.MeshPhongMaterial({
-      map: earthTexture,
-      bumpScale: 0.05,
-      specular: new THREE.Color('#333333'),
-      shininess: 10
-    });
-    
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    scene.add(earth);
-
-    // Atmosphere glow
-    const atmosphereGeometry = new THREE.SphereGeometry(1.1, 64, 64);
-    const atmosphereMaterial = new THREE.ShaderMaterial({
-      transparent: true,
-      side: THREE.BackSide,
-      vertexShader: `
-        varying vec3 vNormal;
-        void main() {
-          vNormal = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        varying vec3 vNormal;
-        void main() {
-          float intensity = pow(0.6 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
-          gl_FragColor = vec4(0.2, 0.6, 1.0, 1.0) * intensity;
-        }
-      `
-    });
-    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-    scene.add(atmosphere);
-
-    // Create starfield
+    // Create cinematic starfield with varying sizes
     const starsGeometry = new THREE.BufferGeometry();
-    const starCount = 5000;
+    const starCount = 10000;
     const starPositions = new Float32Array(starCount * 3);
-    const starColors = new Float32Array(starCount * 3);
+    const starSizes = new Float32Array(starCount);
 
-    for (let i = 0; i < starCount * 3; i += 3) {
-      // Random positions in a sphere
-      const radius = 50 + Math.random() * 450;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      
-      starPositions[i] = radius * Math.sin(phi) * Math.cos(theta);
-      starPositions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      starPositions[i + 2] = radius * Math.cos(phi);
-
-      // Random star colors (white to cyan)
-      const colorChoice = Math.random();
-      if (colorChoice > 0.9) {
-        starColors[i] = 0.3;
-        starColors[i + 1] = 0.9;
-        starColors[i + 2] = 1.0;
-      } else {
-        starColors[i] = 1.0;
-        starColors[i + 1] = 1.0;
-        starColors[i + 2] = 1.0;
-      }
+    for (let i = 0; i < starCount; i++) {
+      const i3 = i * 3;
+      starPositions[i3] = (Math.random() - 0.5) * 2000;
+      starPositions[i3 + 1] = (Math.random() - 0.5) * 2000;
+      starPositions[i3 + 2] = (Math.random() - 0.5) * 2000;
+      starSizes[i] = Math.random() * 3;
     }
 
     starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    starsGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    starsGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
 
     const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
       size: 2,
-      vertexColors: true,
       transparent: true,
-      opacity: 0.8,
-      sizeAttenuation: true
+      opacity: 0.9,
+      sizeAttenuation: true,
+      blending: THREE.AdditiveBlending
     });
 
     const stars = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(stars);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 1);
+    // Create cyan accent stars
+    const accentStarsGeometry = new THREE.BufferGeometry();
+    const accentCount = 500;
+    const accentPositions = new Float32Array(accentCount * 3);
+    const accentSizes = new Float32Array(accentCount);
+
+    for (let i = 0; i < accentCount; i++) {
+      const i3 = i * 3;
+      accentPositions[i3] = (Math.random() - 0.5) * 1500;
+      accentPositions[i3 + 1] = (Math.random() - 0.5) * 1500;
+      accentPositions[i3 + 2] = (Math.random() - 0.5) * 1500;
+      accentSizes[i] = Math.random() * 4 + 2;
+    }
+
+    accentStarsGeometry.setAttribute('position', new THREE.BufferAttribute(accentPositions, 3));
+    accentStarsGeometry.setAttribute('size', new THREE.BufferAttribute(accentSizes, 1));
+
+    const accentStarsMaterial = new THREE.PointsMaterial({
+      color: 0x00e6ff,
+      size: 3,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true,
+      blending: THREE.AdditiveBlending
+    });
+
+    const accentStars = new THREE.Points(accentStarsGeometry, accentStarsMaterial);
+    scene.add(accentStars);
+
+    // Create nebula clouds
+    const nebulaGeometry = new THREE.BufferGeometry();
+    const nebulaCount = 2000;
+    const nebulaPositions = new Float32Array(nebulaCount * 3);
+    const nebulaSizes = new Float32Array(nebulaCount);
+
+    for (let i = 0; i < nebulaCount; i++) {
+      const i3 = i * 3;
+      const radius = 300;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      
+      nebulaPositions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+      nebulaPositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      nebulaPositions[i3 + 2] = radius * Math.cos(phi);
+      nebulaSizes[i] = Math.random() * 20 + 10;
+    }
+
+    nebulaGeometry.setAttribute('position', new THREE.BufferAttribute(nebulaPositions, 3));
+    nebulaGeometry.setAttribute('size', new THREE.BufferAttribute(nebulaSizes, 1));
+
+    const nebulaMaterial = new THREE.PointsMaterial({
+      color: 0x4488ff,
+      size: 15,
+      transparent: true,
+      opacity: 0.15,
+      sizeAttenuation: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
+    scene.add(nebula);
+
+    // Create energy particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particleCount = 1000;
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleVelocities: number[] = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3;
+      particlePositions[i3] = (Math.random() - 0.5) * 500;
+      particlePositions[i3 + 1] = (Math.random() - 0.5) * 500;
+      particlePositions[i3 + 2] = (Math.random() - 0.5) * 500;
+      
+      particleVelocities.push(
+        (Math.random() - 0.5) * 0.2,
+        (Math.random() - 0.5) * 0.2,
+        (Math.random() - 0.5) * 0.2
+      );
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      color: 0x00ffff,
+      size: 1.5,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending
+    });
+
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
+
+    // Cinematic lighting
+    const ambientLight = new THREE.AmbientLight(0x1a1a2e, 0.5);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    sunLight.position.set(5, 3, 5);
-    scene.add(sunLight);
+    const keyLight = new THREE.DirectionalLight(0x4488ff, 2);
+    keyLight.position.set(50, 50, 50);
+    scene.add(keyLight);
 
-    // Mouse movement
+    const fillLight = new THREE.DirectionalLight(0xff6600, 0.5);
+    fillLight.position.set(-50, 0, -50);
+    scene.add(fillLight);
+
+    // Mouse parallax
     let mouseX = 0;
     let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
 
     const handleMouseMove = (event: MouseEvent) => {
-      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+      mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
     };
 
     window.addEventListener('mousemove', handleMouseMove);
 
     // Animation
+    const clock = new THREE.Clock();
+
     const animate = () => {
       requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
 
-      // Rotate Earth
-      earth.rotation.y += 0.001;
-      atmosphere.rotation.y += 0.001;
+      // Smooth camera follow
+      targetX += (mouseX - targetX) * 0.02;
+      targetY += (mouseY - targetY) * 0.02;
+      
+      camera.position.x = targetX * 10;
+      camera.position.y = -targetY * 10;
+      camera.lookAt(0, 0, 0);
 
-      // Rotate starfield slowly
-      stars.rotation.y += 0.0002;
-      stars.rotation.x += 0.0001;
+      // Rotate star fields
+      stars.rotation.y = elapsedTime * 0.01;
+      stars.rotation.x = elapsedTime * 0.005;
 
-      // Camera follows mouse slightly
-      camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.05;
-      camera.position.y += (mouseY * 0.3 - camera.position.y) * 0.05;
-      camera.lookAt(scene.position);
+      accentStars.rotation.y = -elapsedTime * 0.015;
+      accentStars.rotation.z = elapsedTime * 0.01;
+
+      nebula.rotation.y = elapsedTime * 0.005;
+
+      // Animate particles
+      const positions = particlesGeometry.attributes.position.array as Float32Array;
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        positions[i3] += particleVelocities[i3];
+        positions[i3 + 1] += particleVelocities[i3 + 1];
+        positions[i3 + 2] += particleVelocities[i3 + 2];
+
+        // Reset if too far
+        if (Math.abs(positions[i3]) > 250 || 
+            Math.abs(positions[i3 + 1]) > 250 || 
+            Math.abs(positions[i3 + 2]) > 250) {
+          positions[i3] = (Math.random() - 0.5) * 100;
+          positions[i3 + 1] = (Math.random() - 0.5) * 100;
+          positions[i3 + 2] = (Math.random() - 0.5) * 100;
+        }
+      }
+      particlesGeometry.attributes.position.needsUpdate = true;
 
       renderer.render(scene, camera);
     };
@@ -189,12 +239,14 @@ const SpaceBackground = () => {
       window.removeEventListener('resize', handleResize);
       containerRef.current?.removeChild(renderer.domElement);
       renderer.dispose();
-      earthGeometry.dispose();
-      earthMaterial.dispose();
-      atmosphereGeometry.dispose();
-      atmosphereMaterial.dispose();
       starsGeometry.dispose();
       starsMaterial.dispose();
+      accentStarsGeometry.dispose();
+      accentStarsMaterial.dispose();
+      nebulaGeometry.dispose();
+      nebulaMaterial.dispose();
+      particlesGeometry.dispose();
+      particlesMaterial.dispose();
     };
   }, []);
 
@@ -202,7 +254,9 @@ const SpaceBackground = () => {
     <div 
       ref={containerRef} 
       className="fixed inset-0 -z-10"
-      style={{ background: 'radial-gradient(ellipse at center, #0a0e27 0%, #000000 100%)' }}
+      style={{ 
+        background: 'radial-gradient(ellipse at center, #0f1729 0%, #000000 70%, #000000 100%)' 
+      }}
     />
   );
 };
