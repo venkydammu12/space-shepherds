@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Zap, Target, Globe, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
-import WaterRippleBackground from '@/components/WaterRippleBackground';
+import SpaceBackground from '@/components/SpaceBackground';
 
 const Landing = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -59,8 +59,8 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Water Ripple Background */}
-      <WaterRippleBackground />
+      {/* Realistic Space Background with Earth */}
+      <SpaceBackground />
       
       {/* Cinematic Logo Animation */}
       <AnimatePresence>
