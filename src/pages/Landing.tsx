@@ -5,6 +5,7 @@ import { ChevronRight, Zap, Target, Globe, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import SpaceBackground from '@/components/SpaceBackground';
+import logoImage from '@/assets/logo.png';
 
 const Landing = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -81,13 +82,11 @@ const Landing = () => {
               className="flex items-center gap-3 p-3 rounded-xl glass-card border border-primary/30 cursor-pointer hover:border-primary hover:shadow-glow transition-all"
               onClick={handleLogoClick}
             >
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Zap className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <div className="text-sm font-bold text-primary">AI SWARM</div>
-                <div className="text-xs text-muted-foreground">ROBOTICS</div>
-              </div>
+              <img 
+                src={logoImage}
+                alt="AI Swarm Robotics"
+                className="w-12 h-12 object-contain"
+              />
             </div>
           </motion.div>
         )}
@@ -128,9 +127,13 @@ const Landing = () => {
                   ]
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="w-32 h-32 mx-auto mb-8 rounded-2xl border-2 border-primary bg-background/20 backdrop-blur-md flex items-center justify-center"
+                className="w-48 h-48 mx-auto mb-8 rounded-2xl border-2 border-primary bg-background/20 backdrop-blur-md flex items-center justify-center overflow-hidden"
               >
-                <Zap className="w-16 h-16 text-primary" />
+                <img 
+                  src={logoImage}
+                  alt="AI Swarm Robotics"
+                  className="w-full h-full object-contain p-4"
+                />
               </motion.div>
               
               <h2 className="text-4xl font-bold hero-title mb-4">AI SWARM ROBOTICS</h2>

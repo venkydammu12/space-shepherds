@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Bot } from 'lucide-react';
+import logoImage from '@/assets/logo.png';
 
 interface CinematicLogoProps {
   onAnimationComplete?: () => void;
@@ -95,22 +95,17 @@ const CinematicLogo = ({ onAnimationComplete }: CinematicLogoProps) => {
         <div className="absolute inset-[-40px] rounded-full border border-accent/20 animate-spin" 
              style={{ animationDuration: '12s', animationDirection: 'reverse' }} />
         
-        {/* Central Logo */}
+        {/* Logo Image */}
         <div className="relative z-10 flex items-center justify-center">
-          <Bot className="w-16 h-16 text-primary" />
-          <div className="absolute inset-0 bg-primary/20 rounded-full animate-pulse-glow" />
+          <motion.img 
+            src={logoImage}
+            alt="AI Swarm Robotics Logo"
+            className="w-64 h-64 object-contain"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          />
         </div>
-        
-        {/* Title Text */}
-        <motion.div 
-          className="mt-4 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          <h1 className="text-2xl font-bold hero-title mb-1">AI SWARM</h1>
-          <p className="text-sm text-primary/80 font-medium">ROBOTICS</p>
-        </motion.div>
         
         {/* Energy Particles */}
         {[...Array(8)].map((_, i) => (
