@@ -8,6 +8,7 @@ import ProblemPage from "./pages/ProblemPage";
 import SolutionPage from "./pages/SolutionPage";
 import VirtualPrototypePage from "./pages/VirtualPrototypePage";
 import ImpactPage from "./pages/ImpactPage";
+import MissionControl from "./components/MissionControl";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/solution" element={<SolutionPage />} />
           <Route path="/virtual-prototype" element={<VirtualPrototypePage />} />
           <Route path="/impact" element={<ImpactPage />} />
+          <Route path="/mission-control" element={<MissionControl />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
