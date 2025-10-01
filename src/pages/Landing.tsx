@@ -172,7 +172,7 @@ const Landing = () => {
             style={{ backdropFilter: 'blur(24px)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.4)' }}
           >
             <div className="container mx-auto px-6">
-              <nav className="flex items-center justify-between py-4">
+              <nav className="flex items-center justify-between py-2">
                 {/* Logo */}
                 <div className="flex items-center gap-3">
                   <img 
