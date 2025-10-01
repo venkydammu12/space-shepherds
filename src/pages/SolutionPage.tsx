@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import CinematicSolutionLoop from '@/components/CinematicSolutionLoop';
+import SustainableLoop from '@/components/SustainableLoop';
 
 const SolutionPage = () => {
   const navigate = useNavigate();
@@ -53,8 +53,8 @@ const SolutionPage = () => {
             </p>
           </motion.div>
 
-          {/* Cinematic Solution Loop */}
-          <CinematicSolutionLoop />
+          {/* Sustainable Loop */}
+          <SustainableLoop />
 
           {/* CTA */}
           <motion.div
