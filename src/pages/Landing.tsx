@@ -168,8 +168,8 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="fixed top-0 left-0 right-0 z-50 bg-background/10 backdrop-blur-md border-b border-primary/20"
-            style={{ backdropFilter: 'blur(20px)' }}
+            className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-primary/30"
+            style={{ backdropFilter: 'blur(24px)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.4)' }}
           >
             <div className="container mx-auto px-6">
               <nav className="flex items-center justify-between py-4">
@@ -184,7 +184,7 @@ const Landing = () => {
                 </div>
 
                 {/* Navigation Items */}
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden md:flex items-center gap-6">
                   {mainNavItems.map((item, index) => (
                     <motion.button
                       key={item.id}
@@ -192,10 +192,11 @@ const Landing = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       onClick={() => scrollToSection(item.id)}
-                      className="group relative flex items-center gap-2 text-white/90 hover:text-primary transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-primary/10"
+                      className="group relative flex items-center gap-2 text-white hover:text-primary transition-all duration-300 py-2 px-4 rounded-lg hover:bg-primary/20 font-semibold"
+                      style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}
                     >
-                      <item.icon className="w-4 h-4" />
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <item.icon className="w-5 h-5" />
+                      <span className="text-base">{item.label}</span>
                       
                       {/* Hover underline animation */}
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
