@@ -180,7 +180,6 @@ const Landing = () => {
                     alt="AI Swarm Robotics"
                     className="w-10 h-10 object-contain"
                   />
-                  <span className="text-lg font-bold text-primary">AI Swarm Robotics</span>
                 </div>
 
                 {/* Navigation Items */}
