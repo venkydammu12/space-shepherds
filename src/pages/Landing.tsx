@@ -172,30 +172,21 @@ const Landing = () => {
             style={{ backdropFilter: 'blur(24px)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.4)' }}
           >
             <div className="container mx-auto px-6">
-              <nav className="flex items-center justify-between py-2">
-                {/* Logo */}
-                <div className="flex items-center gap-3">
-                  <img 
-                    src={logoImage}
-                    alt="AI Swarm Robotics"
-                    className="w-10 h-10 object-contain"
-                  />
-                </div>
-
+              <nav className="flex items-center justify-between py-2 gap-4">
                 {/* Navigation Items */}
-                <div className="hidden lg:flex items-center gap-3 flex-wrap justify-end">
+                <div className="hidden lg:flex items-center gap-2 flex-1 justify-center flex-wrap">
                   {mainNavItems.map((item, index) => (
                     <motion.button
                       key={item.id}
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      transition={{ delay: index * 0.05 }}
                       onClick={() => scrollToSection(item.id)}
-                      className="group relative flex items-center gap-2 text-white hover:text-primary transition-all duration-300 py-2 px-3 rounded-lg hover:bg-primary/20 font-semibold whitespace-nowrap"
+                      className="group relative flex items-center gap-1.5 text-white hover:text-primary transition-all duration-300 py-1.5 px-3 rounded-lg hover:bg-primary/20 font-semibold whitespace-nowrap text-sm"
                       style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}
                     >
                       <item.icon className="w-4 h-4" />
-                      <span className="text-sm">{item.label}</span>
+                      <span>{item.label}</span>
                       
                       {/* Hover underline animation */}
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
@@ -204,7 +195,7 @@ const Landing = () => {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className="lg:hidden">
+                <div className="lg:hidden flex-1">
                   <Button
                     variant="ghost"
                     size="icon"
