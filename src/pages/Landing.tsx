@@ -183,7 +183,7 @@ const Landing = () => {
                 </div>
 
                 {/* Navigation Items */}
-                <div className="hidden md:flex items-center gap-6">
+                <div className="hidden lg:flex items-center gap-3 flex-wrap justify-end">
                   {mainNavItems.map((item, index) => (
                     <motion.button
                       key={item.id}
@@ -191,11 +191,11 @@ const Landing = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       onClick={() => scrollToSection(item.id)}
-                      className="group relative flex items-center gap-2 text-white hover:text-primary transition-all duration-300 py-2 px-4 rounded-lg hover:bg-primary/20 font-semibold"
+                      className="group relative flex items-center gap-2 text-white hover:text-primary transition-all duration-300 py-2 px-3 rounded-lg hover:bg-primary/20 font-semibold whitespace-nowrap"
                       style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}
                     >
-                      <item.icon className="w-5 h-5" />
-                      <span className="text-base">{item.label}</span>
+                      <item.icon className="w-4 h-4" />
+                      <span className="text-sm">{item.label}</span>
                       
                       {/* Hover underline animation */}
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
@@ -204,7 +204,7 @@ const Landing = () => {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className="md:hidden">
+                <div className="lg:hidden">
                   <Button
                     variant="ghost"
                     size="icon"
