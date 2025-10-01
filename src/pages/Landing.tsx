@@ -172,7 +172,7 @@ const Landing = () => {
             style={{ backdropFilter: 'blur(24px)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.4)' }}
           >
             <div className="container mx-auto px-6">
-              <nav className="flex items-center justify-between py-2 gap-4">
+             <nav className="flex items-center justify-between py-6 gap-4">
                 {/* Navigation Items */}
                 <div className="hidden lg:flex items-center gap-2 flex-1 justify-center flex-wrap">
                   {mainNavItems.map((item, index) => (
@@ -182,10 +182,10 @@ const Landing = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => scrollToSection(item.id)}
-                      className="group relative flex items-center gap-1.5 text-white hover:text-primary transition-all duration-300 py-1.5 px-3 rounded-lg hover:bg-primary/20 font-semibold whitespace-nowrap text-sm"
+                     className="group relative flex items-center gap-1.5 text-white hover:text-primary transition-all duration-300 py-3 px-4 rounded-lg hover:bg-primary/20 font-semibold whitespace-nowrap text-base"
                       style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}
                     >
-                      <item.icon className="w-4 h-4" />
+                     <item.icon className="w-5 h-5" />
                       <span>{item.label}</span>
                       
                       {/* Hover underline animation */}
