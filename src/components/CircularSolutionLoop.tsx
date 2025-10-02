@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bot, Package, Recycle, Zap, RotateCcw, X, Play, Pause } from 'lucide-react';
+import { Search, Bot, Package, Recycle, Zap, RotateCcw, X, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface LoopStep {
   id: string;
@@ -119,6 +119,20 @@ const CircularSolutionLoop: React.FC = () => {
   const closeModal = () => {
     setSelectedStep(null);
     setIsRotating(true);
+  };
+
+  const navigateToStep = (direction: 'prev' | 'next') => {
+    if (!selectedStep) return;
+    const currentIndex = steps.findIndex(step => step.id === selectedStep);
+    let newIndex;
+    
+    if (direction === 'prev') {
+      newIndex = currentIndex === 0 ? steps.length - 1 : currentIndex - 1;
+    } else {
+      newIndex = currentIndex === steps.length - 1 ? 0 : currentIndex + 1;
+    }
+    
+    setSelectedStep(steps[newIndex].id);
   };
 
   const selectedStepData = steps.find(step => step.id === selectedStep);
@@ -315,6 +329,23 @@ const CircularSolutionLoop: React.FC = () => {
       {/* Fullscreen Modal */}
       {selectedStep && selectedStepData && (
         <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-300">
+          
+          {/* Left Navigation Arrow */}
+          <button
+            onClick={() => navigateToStep('prev')}
+            className="fixed left-4 top-1/2 -translate-y-1/2 z-[60] p-4 bg-cyan-500/20 border-2 border-cyan-400 rounded-full backdrop-blur-sm hover:bg-cyan-500/40 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+          >
+            <ChevronLeft className="w-8 h-8 text-cyan-400" />
+          </button>
+
+          {/* Right Navigation Arrow */}
+          <button
+            onClick={() => navigateToStep('next')}
+            className="fixed right-4 top-1/2 -translate-y-1/2 z-[60] p-4 bg-cyan-500/20 border-2 border-cyan-400 rounded-full backdrop-blur-sm hover:bg-cyan-500/40 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+          >
+            <ChevronRight className="w-8 h-8 text-cyan-400" />
+          </button>
+
           <div className="relative w-full max-w-6xl max-h-[90vh] bg-gradient-to-br from-gray-900 to-black border border-blue-400/30 rounded-2xl overflow-hidden animate-in zoom-in duration-500">
             
             {/* Close Button */}
