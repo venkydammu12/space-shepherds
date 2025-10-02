@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import logoImage from '@/assets/logo.png';
+import robotImage from '@/assets/ChatGPT Image Oct 1, 2025, 12_40_34 PM.png';
 
 interface CinematicLogoProps {
   onAnimationComplete?: () => void;
@@ -97,14 +97,18 @@ const CinematicLogo = ({ onAnimationComplete }: CinematicLogoProps) => {
         
         {/* Logo Image */}
         <div className="relative z-10 flex items-center justify-center">
-          <motion.img 
-            src={logoImage}
-            alt="AI Swarm Robotics Logo"
-            className="w-64 h-64 object-contain"
+          <motion.div
+            className="w-64 h-64 rounded-3xl bg-primary/20 flex items-center justify-center overflow-hidden"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
-          />
+          >
+            <img 
+              src={robotImage} 
+              alt="AI Swarm Robot" 
+              className="w-48 h-48 object-contain"
+            />
+          </motion.div>
         </div>
         
         {/* Energy Particles */}
