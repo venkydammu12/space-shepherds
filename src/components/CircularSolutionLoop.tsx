@@ -219,19 +219,6 @@ const CircularSolutionLoop: React.FC = () => {
       {/* Animated Space Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-black to-blue-900"></div>
-        {/* Animated Stars */}
-        {[...Array(100)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`
-            }}
-          />
-        ))}
       </div>
 
       {/* Main Loop Container */}
@@ -239,20 +226,20 @@ const CircularSolutionLoop: React.FC = () => {
         <div className="relative w-full max-w-4xl aspect-square">
           
           {/* Page Navigation - Top Left */}
-          <div className="absolute top-4 left-4 z-20 flex gap-2">
+          <div className="absolute top-4 left-4 z-20 flex gap-3">
             <button
               onClick={() => navigate('/problem')}
-              className="p-3 bg-cyan-500/20 border-2 border-cyan-400 rounded-full backdrop-blur-sm hover:bg-cyan-500/40 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+              className="p-3 bg-white/10 border border-white/30 rounded-lg backdrop-blur-md hover:bg-white/20 hover:border-white/50 transition-all duration-300"
               title="Previous Section"
             >
-              <ChevronLeft className="w-5 h-5 text-cyan-400" />
+              <ChevronLeft className="w-6 h-6 text-white" />
             </button>
             <button
               onClick={() => navigate('/impact')}
-              className="p-3 bg-cyan-500/20 border-2 border-cyan-400 rounded-full backdrop-blur-sm hover:bg-cyan-500/40 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+              className="p-3 bg-white/10 border border-white/30 rounded-lg backdrop-blur-md hover:bg-white/20 hover:border-white/50 transition-all duration-300"
               title="Next Section"
             >
-              <ChevronRight className="w-5 h-5 text-cyan-400" />
+              <ChevronRight className="w-6 h-6 text-white" />
             </button>
           </div>
 
