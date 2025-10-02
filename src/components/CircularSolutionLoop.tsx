@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Bot, Package, Recycle, Zap, RotateCcw, X, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface LoopStep {
   id: string;
@@ -97,6 +98,7 @@ const steps: LoopStep[] = [
 ];
 
 const CircularSolutionLoop: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedStep, setSelectedStep] = useState<string | null>(null);
   const [isRotating, setIsRotating] = useState(true);
   const [rotation, setRotation] = useState(0);
@@ -236,6 +238,24 @@ const CircularSolutionLoop: React.FC = () => {
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="relative w-full max-w-4xl aspect-square">
           
+          {/* Page Navigation - Top Left */}
+          <div className="absolute top-4 left-4 z-20 flex gap-2">
+            <button
+              onClick={() => navigate('/problem')}
+              className="p-3 bg-cyan-500/20 border-2 border-cyan-400 rounded-full backdrop-blur-sm hover:bg-cyan-500/40 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+              title="Previous Section"
+            >
+              <ChevronLeft className="w-5 h-5 text-cyan-400" />
+            </button>
+            <button
+              onClick={() => navigate('/impact')}
+              className="p-3 bg-cyan-500/20 border-2 border-cyan-400 rounded-full backdrop-blur-sm hover:bg-cyan-500/40 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+              title="Next Section"
+            >
+              <ChevronRight className="w-5 h-5 text-cyan-400" />
+            </button>
+          </div>
+
           {/* Control Panel */}
           <div className="absolute top-4 right-4 z-20 flex gap-2">
             <button
