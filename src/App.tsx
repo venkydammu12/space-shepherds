@@ -9,6 +9,7 @@ import SolutionPage from "./pages/SolutionPage";
 import VirtualPrototypePage from "./pages/VirtualPrototypePage";
 import ImpactPage from "./pages/ImpactPage";
 import MissionControl from "./components/MissionControl";
+import RoboNavigator from "./pages/RoboNavigator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/virtual-prototype" element={<VirtualPrototypePage />} />
           <Route path="/impact" element={<ImpactPage />} />
           <Route path="/mission-control" element={<MissionControl />} />
+          <Route path="/robo-navigator" element={<RoboNavigator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
