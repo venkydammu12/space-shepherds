@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Bot, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import * as THREE from 'three';
+import RobotVision from '@/components/RobotVision';
+import Robot3DModel from '@/components/Robot3DModel';
+import AIAssistantWidget from '@/components/AIAssistantWidget';
 
 const VirtualPrototypePage = () => {
   const navigate = useNavigate();
@@ -21,9 +23,6 @@ const VirtualPrototypePage = () => {
   ]);
   
   // Refs
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const robotRef = useRef<HTMLDivElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
 
   // Mission Control Data
   const [missionData, setMissionData] = useState({
@@ -58,163 +57,6 @@ const VirtualPrototypePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 3D Robot Setup
-  useEffect(() => {
-    if (!robotRef.current) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
-    renderer.setSize(400, 400);
-    renderer.setClearColor(0x000000, 0);
-    robotRef.current.appendChild(renderer.domElement);
-
-    // Robot Group
-    const robotGroup = new THREE.Group();
-    
-    // Main Body
-    const bodyGeometry = new THREE.CylinderGeometry(0.8, 1, 2, 8);
-    const bodyMaterial = new THREE.MeshPhongMaterial({ 
-      color: 0x4a90e2, 
-      shininess: 100,
-      transparent: true,
-      opacity: 0.9
-    });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    robotGroup.add(body);
-
-    // Head/Sensor Array
-    const headGeometry = new THREE.SphereGeometry(0.6, 16, 16);
-    const headMaterial = new THREE.MeshPhongMaterial({ 
-      color: 0x00e6ff,
-      transparent: true,
-      opacity: 0.8
-    });
-    const head = new THREE.Mesh(headGeometry, headMaterial);
-    head.position.y = 1.5;
-    robotGroup.add(head);
-
-    // Arms
-    const armGeometry = new THREE.CylinderGeometry(0.1, 0.15, 1.5, 6);
-    const armMaterial = new THREE.MeshPhongMaterial({ color: 0x00e6ff });
-    
-    const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-    leftArm.position.set(-1.2, 0, 0);
-    leftArm.rotation.z = Math.PI / 6;
-    robotGroup.add(leftArm);
-    
-    const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-    rightArm.position.set(1.2, 0, 0);
-    rightArm.rotation.z = -Math.PI / 6;
-    robotGroup.add(rightArm);
-
-    scene.add(robotGroup);
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-    scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    camera.position.z = 5;
-
-    // Animation
-    const animate = () => {
-      requestAnimationFrame(animate);
-      
-      if (robotStatus === 'idle') {
-        robotGroup.rotation.y += 0.005;
-        head.rotation.x = Math.sin(Date.now() * 0.002) * 0.1;
-      } else if (robotStatus === 'scanning') {
-        head.rotation.y = Math.sin(Date.now() * 0.01) * 0.5;
-        leftArm.rotation.z = Math.PI / 6 + Math.sin(Date.now() * 0.008) * 0.2;
-        rightArm.rotation.z = -Math.PI / 6 - Math.sin(Date.now() * 0.008) * 0.2;
-      }
-      
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    return () => {
-      if (robotRef.current && renderer.domElement) {
-        robotRef.current.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-    };
-  }, [robotStatus]);
-
-  // Camera Functions
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 640, height: 480 },
-        audio: false
-      });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-      
-      streamRef.current = stream;
-      setCameraActive(true);
-      
-      toast({
-        title: "Camera Active",
-        description: "Live camera feed established for object detection.",
-      });
-    } catch (error) {
-      toast({
-        title: "Camera Error",
-        description: "Unable to access camera. Please check permissions.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    
-    setCameraActive(false);
-    
-    toast({
-      title: "Camera Stopped",
-      description: "Camera feed disconnected.",
-    });
-  };
-
-  const captureImage = () => {
-    if (!videoRef.current) return;
-    
-    const canvas = document.createElement('canvas');
-    canvas.width = 640;
-    canvas.height = 480;
-    const ctx = canvas.getContext('2d');
-    
-    if (ctx) {
-      ctx.drawImage(videoRef.current, 0, 0);
-      const imageData = canvas.toDataURL('image/png');
-      
-      // Simulate object detection
-      setTimeout(() => {
-        toast({
-          title: "Object Detected",
-          description: "Debris object identified and catalogued.",
-        });
-      }, 1000);
-    }
-  };
 
   // Voice Functions
   const speak = (text: string) => {
@@ -536,135 +378,9 @@ const VirtualPrototypePage = () => {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
-                className="grid lg:grid-cols-2 gap-8"
+                className="h-full"
               >
-                <div className="hologram-box p-8 rounded-3xl">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
-                      <Camera className="w-6 h-6" />
-                      Live Camera Feed
-                    </h2>
-                    <Button
-                      variant={cameraActive ? "destructive" : "default"}
-                      onClick={cameraActive ? stopCamera : startCamera}
-                      className={!cameraActive ? "bg-accent hover:bg-accent/90" : ""}
-                    >
-                      {cameraActive ? (
-                        <>
-                          <CameraOff className="w-4 h-4 mr-2" />
-                          Stop Camera
-                        </>
-                      ) : (
-                        <>
-                          <Camera className="w-4 h-4 mr-2" />
-                          Start Camera
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
-                  <div className="relative aspect-video bg-card/50 rounded-lg overflow-hidden mb-6">
-                    {cameraActive ? (
-                      <>
-                        <video
-                          ref={videoRef}
-                          className="w-full h-full object-cover"
-                          muted
-                          playsInline
-                        />
-                        {/* HUD Overlay */}
-                        <div className="absolute inset-0 pointer-events-none">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-8 h-8 border-2 border-primary rounded-full opacity-60">
-                              <div className="w-full h-full border-2 border-accent rounded-full animate-pulse-glow" />
-                            </div>
-                          </div>
-                          
-                          <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-primary opacity-80" />
-                          <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-primary opacity-80" />
-                          <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-primary opacity-80" />
-                          <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-primary opacity-80" />
-                          
-                          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 glass-card px-3 py-1 rounded">
-                            <div className="text-xs text-primary font-mono">OBJECT DETECTION ACTIVE</div>
-                          </div>
-                          
-                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 glass-card px-3 py-1 rounded">
-                            <div className="text-xs text-accent font-mono">SCANNING FOR DEBRIS</div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                          <p className="text-muted-foreground">Click 'Start Camera' to begin live object detection</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {cameraActive && (
-                    <div className="flex justify-center">
-                      <Button
-                        onClick={captureImage}
-                        className="bg-primary hover:bg-primary/90 text-black"
-                      >
-                        <Target className="w-4 h-4 mr-2" />
-                        Capture & Analyze
-                      </Button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-6">
-                  <div className="glass-card p-6 rounded-2xl">
-                    <h3 className="text-xl font-bold text-accent mb-4">Detection Results</h3>
-                    <div className="space-y-4">
-                      <div className="glass-card p-4 rounded-xl bg-primary/10">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Objects Detected</span>
-                          <span className="text-lg font-bold text-primary">
-                            {cameraActive ? Math.floor(Math.random() * 5) + 1 : 0}
-                          </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {cameraActive ? 'Real-time analysis active' : 'Camera inactive'}
-                        </div>
-                      </div>
-
-                      <div className="glass-card p-4 rounded-xl bg-accent/10">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Classification</span>
-                          <span className="text-sm text-accent">
-                            {cameraActive ? 'Processing...' : 'Standby'}
-                          </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          AI-powered object recognition
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="glass-card p-6 rounded-2xl">
-                    <h3 className="text-xl font-bold text-primary mb-4">Camera Settings</h3>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div className="glass-card p-3 rounded-lg">
-                        <div className="text-xs text-muted-foreground">Resolution</div>
-                        <div className="text-sm font-bold text-primary">640x480</div>
-                      </div>
-                      <div className="glass-card p-3 rounded-lg">
-                        <div className="text-xs text-muted-foreground">Frame Rate</div>
-                        <div className="text-sm font-bold text-accent">30 FPS</div>
-                      </div>
-                      <div className="glass-card p-3 rounded-lg">
-                        <div className="text-xs text-muted-foreground">Mode</div>
-                        <div className="text-sm font-bold text-primary">DETECT</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <RobotVision />
               </motion.div>
             )}
 
@@ -677,132 +393,7 @@ const VirtualPrototypePage = () => {
                 exit={{ opacity: 0, x: 50 }}
                 className="grid lg:grid-cols-2 gap-8"
               >
-                <div className="hologram-box p-8 rounded-3xl">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
-                      <Bot className="w-6 h-6" />
-                      AI Assistant
-                    </h2>
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      robotStatus === 'idle' ? 'bg-muted text-muted-foreground' :
-                      robotStatus === 'scanning' ? 'bg-primary/20 text-primary' :
-                      'bg-accent/20 text-accent'
-                    }`}>
-                      {robotStatus.toUpperCase()}
-                    </div>
-                  </div>
-
-                  {/* Voice Controls */}
-                  <div className="mb-6">
-                    <div className="flex gap-2 mb-4">
-                      <Button
-                        variant={isListening ? "default" : "outline"}
-                        onClick={toggleListening}
-                        className={`flex-1 ${isListening ? 'bg-primary animate-pulse-glow' : ''}`}
-                      >
-                        {isListening ? <Mic className="w-4 h-4 mr-2" /> : <MicOff className="w-4 h-4 mr-2" />}
-                        {isListening ? 'Listening...' : 'Voice Command'}
-                      </Button>
-                      
-                      <Button
-                        variant="outline"
-                        onClick={() => speechSynthesis.cancel()}
-                        disabled={!isSpeaking}
-                      >
-                        {isSpeaking ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                      </Button>
-                    </div>
-
-                    <div className="text-xs text-muted-foreground text-center">
-                      Try: "scan area", "camera status", "dashboard report", "system status"
-                    </div>
-                  </div>
-
-                  {/* Chat Interface */}
-                  <div className="glass-card p-4 rounded-xl max-h-64 overflow-y-auto mb-4">
-                    <div className="space-y-3">
-                      {chatHistory.map((message, index) => (
-                        <div
-                          key={index}
-                          className={`p-3 rounded-lg ${
-                            message.type === 'robot' 
-                              ? 'bg-primary/10 border-l-2 border-primary' 
-                              : 'bg-accent/10 border-l-2 border-accent'
-                          }`}
-                        >
-                          <div className={`text-xs font-bold mb-1 ${
-                            message.type === 'robot' ? 'text-primary' : 'text-accent'
-                          }`}>
-                            {message.type === 'robot' ? 'AI Assistant' : 'User'}
-                          </div>
-                          <div className="text-sm">{message.message}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Quick Commands */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { label: 'Scan', command: 'scan area' },
-                      { label: 'Status', command: 'system status' },
-                      { label: 'Camera', command: 'camera status' },
-                      { label: 'Dashboard', command: 'dashboard report' }
-                    ].map((cmd, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleVoiceCommand(cmd.command)}
-                        className="text-xs"
-                      >
-                        {cmd.label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="glass-card p-6 rounded-2xl">
-                    <h3 className="text-xl font-bold text-accent mb-4">AI Capabilities</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-primary rounded-full animate-pulse-glow" />
-                        <span className="text-sm">Natural Language Processing</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-accent rounded-full animate-pulse-glow" />
-                        <span className="text-sm">Voice Recognition & Synthesis</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-primary rounded-full animate-pulse-glow" />
-                        <span className="text-sm">Real-time System Control</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-accent rounded-full animate-pulse-glow" />
-                        <span className="text-sm">Mission Status Reporting</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="glass-card p-6 rounded-2xl">
-                    <h3 className="text-xl font-bold text-primary mb-4">System Health</h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">AI Processing</span>
-                        <span className="text-primary font-bold">98%</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">Voice Recognition</span>
-                        <span className="text-accent font-bold">Active</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">Response Time</span>
-                        <span className="text-primary font-bold">0.3s</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <AIAssistantWidget />
               </motion.div>
             )}
 
@@ -815,62 +406,10 @@ const VirtualPrototypePage = () => {
                 exit={{ opacity: 0, x: 50 }}
                 className="grid lg:grid-cols-2 gap-8"
               >
-                <div className="hologram-box p-8 rounded-3xl">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
-                      <Cpu className="w-6 h-6" />
-                      3D Robot Control
-                    </h2>
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      robotStatus === 'idle' ? 'bg-muted text-muted-foreground' :
-                      robotStatus === 'scanning' ? 'bg-primary/20 text-primary' :
-                      'bg-accent/20 text-accent'
-                    }`}>
-                      {robotStatus.toUpperCase()}
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-center mb-6">
-                    <div 
-                      ref={robotRef}
-                      className="w-[400px] h-[400px] border border-primary/30 rounded-xl bg-background/20"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <Button
-                      onClick={() => {
-                        setRobotStatus('scanning');
-                        setTimeout(() => setRobotStatus('idle'), 5000);
-                      }}
-                      className="bg-primary hover:bg-primary/90 text-black"
-                    >
-                      <Radar className="w-4 h-4 mr-2" />
-                      Scan
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setRobotStatus('moving');
-                        setTimeout(() => setRobotStatus('idle'), 3000);
-                      }}
-                      variant="outline"
-                      className="border-accent text-accent"
-                    >
-                      <Target className="w-4 h-4 mr-2" />
-                      Move
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setRobotStatus('collecting');
-                        setTimeout(() => setRobotStatus('idle'), 4000);
-                      }}
-                      variant="outline"
-                    >
-                      <Zap className="w-4 h-4 mr-2" />
-                      Collect
-                    </Button>
-                  </div>
-                </div>
+                <Robot3DModel 
+                  robotStatus={robotStatus} 
+                  onStatusChange={setRobotStatus}
+                />
 
                 <div className="space-y-6">
                   <div className="glass-card p-6 rounded-2xl">
