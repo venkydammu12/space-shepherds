@@ -47,8 +47,14 @@ const Landing = () => {
           case 'virtual-robot':
             navigate('/virtual-prototype');
             break;
+          case 'robot-eye':
+            navigate('/robo-eye-camera');
+            break;
           case 'dashboard':
             navigate('/mission-control');
+            break;
+          case 'robo-scan':
+            navigate('/robo-navigator');
             break;
           case 'impact':
             navigate('/impact');

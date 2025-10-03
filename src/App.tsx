@@ -14,6 +14,7 @@ const VirtualPrototypePage = lazy(() => import("./pages/VirtualPrototypePage"));
 const ImpactPage = lazy(() => import("./pages/ImpactPage"));
 const MissionControl = lazy(() => import("./components/MissionControl"));
 const RoboNavigator = lazy(() => import("./pages/RoboNavigator"));
+const RoboEyeCamera = lazy(() => import("./pages/RoboEyeCamera"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/impact" element={<ImpactPage />} />
             <Route path="/mission-control" element={<MissionControl />} />
             <Route path="/robo-navigator" element={<RoboNavigator />} />
+            <Route path="/robo-eye-camera" element={<RoboEyeCamera />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
