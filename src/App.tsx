@@ -17,7 +17,6 @@ const RoboNavigator = lazy(() => import("./pages/RoboNavigator"));
 const RoboEyeCamera = lazy(() => import("./pages/RoboEyeCamera"));
 const AIRobotPage = lazy(() => import("./pages/AIRobotPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -38,7 +37,6 @@ const App = () => (
             <Route path="/robo-navigator" element={<RoboNavigator />} />
             <Route path="/robo-eye-camera" element={<RoboEyeCamera />} />
             <Route path="/ai-robot" element={<AIRobotPage />} />
-            <Route path="*" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
