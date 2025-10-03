@@ -153,7 +153,7 @@ const Landing = () => {
             {/* Let's Get In Button */}
             <Button
               onClick={handleLetsGetIn}
-              className="bg-primary hover:bg-primary/90 text-black font-bold px-8 py-4 rounded-xl text-lg shadow-glow"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4 rounded-xl text-lg shadow-glow"
             >
               <Rocket className="w-5 h-5 mr-3" />
               🚀 Let's Get In
@@ -370,7 +370,7 @@ const Landing = () => {
                 <Button
                   size="lg"
                   onClick={() => navigate('/mission-control')}
-                  className="bg-primary hover:bg-primary/90 text-black font-bold px-12 py-6 text-xl rounded-xl shadow-glow"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-12 py-6 text-xl rounded-xl shadow-glow"
                 >
                   Launch Mission Control
                   <Zap className="w-6 h-6 ml-3" />
