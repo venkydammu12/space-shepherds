@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import robotImage from '@/assets/ChatGPT Image Oct 1, 2025, 12_40_34 PM.png';
+import robotImage from '@/assets/logo-main.png';
 
 interface CinematicLogoProps {
   onAnimationComplete?: () => void;

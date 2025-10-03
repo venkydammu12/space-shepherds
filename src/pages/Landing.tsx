@@ -5,7 +5,7 @@ import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog, Rocket, Chrome a
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import SpaceBackground from '@/components/SpaceBackground';
-import robotImage from '@/assets/ChatGPT Image Oct 1, 2025, 12_40_34 PM.png';
+import robotImage from '@/assets/logo-main.png';
 
 const Landing = () => {
   const [showIntro, setShowIntro] = useState(true);
