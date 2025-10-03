@@ -9,7 +9,7 @@ const AIAssistantWidget = () => {
   useEffect(() => {
     // Load ElevenLabs script with pinned version and error handling
     const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed@1.0.0';
+    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
     script.async = true;
     script.type = 'text/javascript';
     script.crossOrigin = 'anonymous';
