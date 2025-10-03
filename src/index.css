@@ -440,4 +440,14 @@
     0%, 100% { opacity: 0.6; }
     50% { opacity: 1; }
   }
+  
+  /* Fix Lovable badge close button touch target size for accessibility */
+  #lovable-badge-close {
+    min-width: 24px !important;
+    min-height: 24px !important;
+    padding: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
 }
