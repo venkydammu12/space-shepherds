@@ -342,9 +342,8 @@ const Landing = () => {
             {/* Hero Section */}
             <div className="text-center max-w-6xl mx-auto mb-16">
               <motion.h1
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
                 className="text-6xl md:text-8xl font-bold hero-title mb-6"
               >
                 AI SWARM

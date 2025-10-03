@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { motion } from 'framer-motion';
 import { RotateCcw, Zap, Target, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import robotImage from '@/assets/robo2.0.jpg';
+import robotImage from '@/assets/robo.jpg';
 
 interface Robot3DProps {
   robotStatus: 'idle' | 'scanning' | 'moving' | 'collecting';
