@@ -60,207 +60,6 @@ const RobotMesh = ({ robotStatus }: { robotStatus: string }) => {
     }
   });
 
-  // Create robot geometry based on the image
-  const createRobotGeometry = () => {
-    const group = new THREE.Group();
-
-    // Head
-    const headGeometry = new THREE.SphereGeometry(0.4, 16, 16);
-    const headMaterial = new THREE.MeshPhongMaterial({
-      color: 0xc0c0c0,
-      shininess: 100,
-      emissive: 0x001122,
-      emissiveIntensity: 0.1
-    });
-    const head = new THREE.Mesh(headGeometry, headMaterial);
-    head.position.y = 1.8;
-
-    // Eyes (glowing blue)
-    const eyeGeometry = new THREE.SphereGeometry(0.08, 8, 8);
-    const eyeMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      emissive: 0x00ffff,
-      emissiveIntensity: 0.8
-    });
-    
-    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    leftEye.position.set(-0.15, 0.1, 0.35);
-    head.add(leftEye);
-    
-    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    rightEye.position.set(0.15, 0.1, 0.35);
-    head.add(rightEye);
-
-    // Chest/Torso
-    const chestGeometry = new THREE.CylinderGeometry(0.6, 0.7, 1.2, 8);
-    const chestMaterial = new THREE.MeshPhongMaterial({
-      color: 0xa0a0a0,
-      shininess: 80,
-      emissive: 0x001144,
-      emissiveIntensity: 0.05
-    });
-    const chest = new THREE.Mesh(chestGeometry, chestMaterial);
-    chest.position.y = 0.8;
-
-    // Chest Core (glowing blue)
-    const coreGeometry = new THREE.SphereGeometry(0.15, 16, 16);
-    const coreMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00aaff,
-      emissive: 0x00aaff,
-      emissiveIntensity: 0.6
-    });
-    const core = new THREE.Mesh(coreGeometry, coreMaterial);
-    core.position.set(0, 0.2, 0.5);
-    chest.add(core);
-
-    // Arms
-    const armGeometry = new THREE.CylinderGeometry(0.15, 0.18, 1, 8);
-    const armMaterial = new THREE.MeshPhongMaterial({
-      color: 0x909090,
-      shininess: 60,
-      emissive: 0x002244,
-      emissiveIntensity: 0.03
-    });
-
-    const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-    leftArm.position.set(-0.8, 0.8, 0);
-    leftArm.rotation.z = Math.PI / 6;
-
-    const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-    rightArm.position.set(0.8, 0.8, 0);
-    rightArm.rotation.z = -Math.PI / 6;
-
-    // Legs
-    const legGeometry = new THREE.CylinderGeometry(0.18, 0.2, 1.4, 8);
-    const legMaterial = new THREE.MeshPhongMaterial({
-      color: 0x808080,
-      shininess: 70,
-      emissive: 0x001133,
-      emissiveIntensity: 0.04
-    });
-
-    const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-    leftLeg.position.set(-0.3, -0.5, 0);
-
-    const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
-    rightLeg.position.set(0.3, -0.5, 0);
-
-    // Assemble robot
-    group.add(head);
-    group.add(chest);
-    group.add(leftArm);
-    group.add(rightArm);
-    group.add(leftLeg);
-    group.add(rightLeg);
-
-    return { group, head, leftArm, rightArm, chest };
-  };
-
-  return (
-    <div className="relative w-full h-full">
-      <Canvas camera={{ position: [0, 2, 5], fov: 50 }}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={1} color="#00aaff" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#0066cc" />
-        <spotLight
-          position={[0, 10, 0]}
-          angle={0.3}
-          penumbra={1}
-          intensity={1}
-          color="#00ffff"
-          castShadow
-        />
-
-        <RobotMesh robotStatus={robotStatus} />
-
-        <OrbitControls
-          enablePan={true}
-          enableZoom={true}
-          enableRotate={true}
-          maxDistance={10}
-          minDistance={2}
-          maxPolarAngle={Math.PI / 1.5}
-          minPolarAngle={Math.PI / 6}
-        />
-
-        {/* Environment */}
-        <mesh position={[0, -2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[20, 20]} />
-          <meshPhongMaterial 
-            color="#001122" 
-            transparent 
-            opacity={0.3}
-            emissive="#001122"
-            emissiveIntensity={0.1}
-          />
-        </mesh>
-      </Canvas>
-
-      {/* Status Overlay */}
-      <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-cyan-500/30">
-        <div className="text-cyan-400 text-sm font-bold">
-          STATUS: {robotStatus.toUpperCase()}
-        </div>
-      </div>
-
-      {/* Robot Info Panel */}
-      <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm p-4 rounded-lg border border-cyan-500/30 space-y-2">
-        <div className="text-cyan-400 text-xs font-mono">MODEL: SW-ROBO-2.0</div>
-        <div className="text-cyan-400 text-xs font-mono">POWER: 98%</div>
-        <div className="text-cyan-400 text-xs font-mono">SYSTEMS: ONLINE</div>
-      </div>
-    </div>
-  );
-};
-
-const RobotMesh = ({ robotStatus }: { robotStatus: string }) => {
-  const groupRef = useRef<THREE.Group>(null);
-  const headRef = useRef<THREE.Mesh>(null);
-  const leftArmRef = useRef<THREE.Mesh>(null);
-  const rightArmRef = useRef<THREE.Mesh>(null);
-  const chestRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state, delta) => {
-    if (!groupRef.current) return;
-
-    const time = state.clock.elapsedTime;
-
-    // Base rotation
-    if (robotStatus === 'idle') {
-      groupRef.current.rotation.y = Math.sin(time * 0.3) * 0.1;
-      
-      // Gentle breathing effect
-      if (chestRef.current) {
-        chestRef.current.scale.setScalar(1 + Math.sin(time * 2) * 0.02);
-      }
-    }
-
-    // Head movements
-    if (headRef.current) {
-      if (robotStatus === 'scanning') {
-        headRef.current.rotation.y = Math.sin(time * 2) * 0.5;
-        headRef.current.rotation.x = Math.sin(time * 1.5) * 0.2;
-      } else {
-        headRef.current.rotation.y = Math.sin(time * 0.5) * 0.1;
-        headRef.current.rotation.x = Math.sin(time * 0.3) * 0.05;
-      }
-    }
-
-    // Arm movements
-    if (leftArmRef.current && rightArmRef.current) {
-      if (robotStatus === 'collecting') {
-        leftArmRef.current.rotation.z = Math.PI / 4 + Math.sin(time * 3) * 0.3;
-        rightArmRef.current.rotation.z = -Math.PI / 4 - Math.sin(time * 3) * 0.3;
-      } else if (robotStatus === 'moving') {
-        leftArmRef.current.rotation.x = Math.sin(time * 4) * 0.3;
-        rightArmRef.current.rotation.x = -Math.sin(time * 4) * 0.3;
-      } else {
-        leftArmRef.current.rotation.z = Math.sin(time * 0.8) * 0.1;
-        rightArmRef.current.rotation.z = -Math.sin(time * 0.8) * 0.1;
-      }
-    }
-  });
-
   useEffect(() => {
     if (!groupRef.current) return;
 
@@ -281,7 +80,7 @@ const RobotMesh = ({ robotStatus }: { robotStatus: string }) => {
 
     // Eyes (glowing blue)
     const eyeGeometry = new THREE.SphereGeometry(0.08, 8, 8);
-    const eyeMaterial = new THREE.MeshBasicMaterial({
+    const eyeMaterial = new THREE.MeshStandardMaterial({
       color: 0x00ffff,
       emissive: 0x00ffff,
       emissiveIntensity: 0.8
@@ -309,7 +108,7 @@ const RobotMesh = ({ robotStatus }: { robotStatus: string }) => {
 
     // Chest Core (glowing blue)
     const coreGeometry = new THREE.SphereGeometry(0.15, 16, 16);
-    const coreMaterial = new THREE.MeshBasicMaterial({
+    const coreMaterial = new THREE.MeshStandardMaterial({
       color: 0x00aaff,
       emissive: 0x00aaff,
       emissiveIntensity: 0.6

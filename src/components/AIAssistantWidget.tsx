@@ -7,14 +7,19 @@ const AIAssistantWidget = () => {
   const widgetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Load ElevenLabs script
+    // Load ElevenLabs script with pinned version and error handling
     const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed@1.0.0';
     script.async = true;
     script.type = 'text/javascript';
+    script.crossOrigin = 'anonymous';
     
     script.onload = () => {
-      console.log('ElevenLabs widget loaded');
+      console.log('ElevenLabs widget loaded successfully');
+    };
+    
+    script.onerror = () => {
+      console.error('Failed to load ElevenLabs widget');
     };
     
     document.head.appendChild(script);
