@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Mic, Volume2 } from 'lucide-react';
-import robotImage from '@/assets/robo2.0.jpg';
+import robotImage from '@/assets/robo.jpg';
 
 const AIAssistantWidget = () => {
   const widgetRef = useRef<HTMLDivElement>(null);
