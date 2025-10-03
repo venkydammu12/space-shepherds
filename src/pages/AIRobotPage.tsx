@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Home, Volume2, Mic } from 'lucide-react';
+import { Bot, Chrome as Home, Volume2, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import robotImage from '@/assets/logo-main.png';
