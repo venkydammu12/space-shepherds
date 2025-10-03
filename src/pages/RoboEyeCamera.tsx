@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
-import { Camera, CameraOff, Home } from 'lucide-react';
+import { Camera, CameraOff, Chrome as Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface RoboEyeProps {
