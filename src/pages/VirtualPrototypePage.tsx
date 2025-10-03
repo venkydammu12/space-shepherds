@@ -391,9 +391,11 @@ const VirtualPrototypePage = () => {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
-                className="grid lg:grid-cols-2 gap-8"
+                className="max-w-4xl mx-auto"
               >
-                <AIAssistantWidget />
+                <div className="h-[700px]">
+                  <AIAssistantWidget />
+                </div>
               </motion.div>
             )}
 
