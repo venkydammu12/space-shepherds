@@ -1,20 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Bot, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import RobotVision from '@/components/RobotVision';
 import LiveCameraFeed from '@/components/LiveCameraFeed';
 import Robot3DModel from '@/components/Robot3DModel';
-import AIAssistantWidget from '@/components/AIAssistantWidget';
 
 const VirtualPrototypePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
   // States
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'robot' | 'control'>('dashboard');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control'>('dashboard');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -204,7 +203,6 @@ const VirtualPrototypePage = () => {
               {[
                 { id: 'dashboard', label: 'Mission Control', icon: Monitor },
                 { id: 'camera', label: 'Live Camera', icon: Camera },
-                { id: 'robot', label: 'AI Robot', icon: Bot },
                 { id: 'control', label: '3D Control', icon: Cpu }
               ].map((tab) => (
                 <Button
@@ -343,10 +341,10 @@ const VirtualPrototypePage = () => {
                       <Button 
                         variant="outline" 
                         className="w-full"
-                        onClick={() => setActiveSection('robot')}
+                        onClick={() => setActiveSection('control')}
                       >
-                        <Bot className="w-4 h-4 mr-2" />
-                        AI Assistant
+                        <Cpu className="w-4 h-4 mr-2" />
+                        3D Control
                       </Button>
                     </div>
                   </div>
@@ -385,20 +383,6 @@ const VirtualPrototypePage = () => {
               </motion.div>
             )}
 
-            {/* AI Robot Section */}
-            {activeSection === 'robot' && (
-              <motion.div
-                key="robot"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
-                className="max-w-4xl mx-auto"
-              >
-                <div className="h-[700px]">
-                  <AIAssistantWidget />
-                </div>
-              </motion.div>
-            )}
 
             {/* 3D Control Section */}
             {activeSection === 'control' && (
