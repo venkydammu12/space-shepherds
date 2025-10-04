@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Bot, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import RobotVision from '@/components/RobotVision';
@@ -14,8 +14,7 @@ const VirtualPrototypePage = () => {
   const { toast } = useToast();
   
   // States
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control'>('dashboard');
-  const [showVoiceAssistant, setShowVoiceAssistant] = useState(false);
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control' | 'assistant'>('dashboard');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -205,7 +204,8 @@ const VirtualPrototypePage = () => {
               {[
                 { id: 'dashboard', label: 'Mission Control', icon: Monitor },
                 { id: 'camera', label: 'Live Camera', icon: Camera },
-                { id: 'control', label: '3D Control', icon: Cpu }
+                { id: 'control', label: '3D Control', icon: Cpu },
+                { id: 'assistant', label: 'AI Assistant', icon: Bot }
               ].map((tab) => (
                 <Button
                   key={tab.id}
@@ -443,49 +443,45 @@ const VirtualPrototypePage = () => {
                 </div>
               </motion.div>
             )}
+
+            {/* AI Assistant Section - Centered */}
+            {activeSection === 'assistant' && (
+              <motion.div
+                key="assistant"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex justify-center items-center"
+              >
+                <div className="w-full max-w-4xl">
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-center mb-8"
+                  >
+                    <h2 className="text-4xl font-bold text-primary mb-4">
+                      AI Voice Assistant
+                    </h2>
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                      Interact with ARIA using voice commands to control robots, monitor missions, and analyze space debris in real-time
+                    </p>
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="h-[700px]"
+                  >
+                    <AIAssistantWidget />
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
-
-      {/* Voice Assistant Widget - Fixed Position */}
-      <AnimatePresence>
-        {showVoiceAssistant && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-8 right-8 w-96 h-[600px] z-50"
-          >
-            <div className="relative w-full h-full">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowVoiceAssistant(false)}
-                className="absolute -top-2 -right-2 z-10 bg-background/80 backdrop-blur-sm border border-primary/30 hover:bg-background/90"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-              <AIAssistantWidget />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Voice Assistant Toggle Button */}
-      {!showVoiceAssistant && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="fixed bottom-8 right-8 z-50"
-        >
-          <Button
-            onClick={() => setShowVoiceAssistant(true)}
-            className="w-16 h-16 rounded-full bg-primary hover:bg-primary/90 text-black shadow-lg hover:shadow-xl transition-all"
-          >
-            <Bot className="w-8 h-8" />
-          </Button>
-        </motion.div>
-      )}
     </div>
   );
 };
