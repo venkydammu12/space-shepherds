@@ -33,9 +33,9 @@ const AIAssistantWidget = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-black via-blue-950/20 to-black rounded-3xl border border-cyan-500/30 overflow-hidden">
+    <div className="relative w-full h-full bg-gradient-to-br from-black via-blue-950/20 to-black rounded-3xl border border-cyan-500/30 overflow-visible">
       {/* Robot Avatar */}
-      <div className="absolute top-8 left-8 right-8 flex justify-center">
+      <div className="absolute top-8 left-8 right-8 flex justify-center z-0">
         <motion.div
           className="relative"
           animate={{
@@ -70,7 +70,7 @@ const AIAssistantWidget = () => {
       </div>
 
       {/* AI Status */}
-      <div className="absolute top-48 left-8 right-8 text-center">
+      <div className="absolute top-48 left-8 right-8 text-center z-0">
         <h3 className="text-2xl font-bold text-cyan-400 mb-2">ARIA - AI Assistant</h3>
         <p className="text-cyan-500/80 text-sm">Autonomous Robotics Intelligence Assistant</p>
         
@@ -80,8 +80,8 @@ const AIAssistantWidget = () => {
         </div>
       </div>
 
-      {/* ElevenLabs Widget Container */}
-      <div className="absolute bottom-8 left-8 right-8" ref={widgetRef}>
+      {/* ElevenLabs Widget Container - Higher z-index for interactivity */}
+      <div className="absolute bottom-8 left-8 right-8 z-50" ref={widgetRef}>
         <div className="bg-black/50 backdrop-blur-sm rounded-2xl border border-cyan-500/30 p-6">
           <div className="text-center mb-4">
             <div className="flex justify-center items-center gap-3 mb-2">
@@ -89,25 +89,25 @@ const AIAssistantWidget = () => {
               <span className="text-cyan-400 font-bold">Voice Interface</span>
               <Volume2 className="w-5 h-5 text-cyan-400" />
             </div>
-            <p className="text-cyan-500/70 text-xs">Click below to start conversation with AI Assistant</p>
+            <p className="text-cyan-500/70 text-xs">Click the button below to start voice conversation</p>
           </div>
           
-          {/* ElevenLabs Widget */}
-          <div className="flex justify-center">
+          {/* ElevenLabs Widget - Ensure it's interactive */}
+          <div className="flex justify-center min-h-[100px] relative z-50">
             <elevenlabs-convai agent-id="agent_3901k6ddjrvqenmbwbevw4xrdv3t"></elevenlabs-convai>
           </div>
           
           {/* Fallback UI */}
           <div className="mt-4 text-center">
             <div className="text-xs text-cyan-500/60">
-              AI Assistant ready for voice commands and conversation
+              Click the voice button to begin conversation
             </div>
           </div>
         </div>
       </div>
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Background Effects - Lower z-index */}
+      <div className="absolute inset-0 pointer-events-none z-0">
         {/* Floating Particles */}
         {[...Array(15)].map((_, i) => (
           <motion.div
