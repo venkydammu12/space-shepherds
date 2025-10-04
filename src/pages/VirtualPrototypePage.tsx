@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Bot, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import RobotVision from '@/components/RobotVision';
 import LiveCameraFeed from '@/components/LiveCameraFeed';
 import Robot3DModel from '@/components/Robot3DModel';
+import AIAssistantWidget from '@/components/AIAssistantWidget';
 
 const VirtualPrototypePage = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const VirtualPrototypePage = () => {
   
   // States
   const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control'>('dashboard');
+  const [showVoiceAssistant, setShowVoiceAssistant] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -444,6 +446,46 @@ const VirtualPrototypePage = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Voice Assistant Widget - Fixed Position */}
+      <AnimatePresence>
+        {showVoiceAssistant && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed bottom-8 right-8 w-96 h-[600px] z-50"
+          >
+            <div className="relative w-full h-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowVoiceAssistant(false)}
+                className="absolute -top-2 -right-2 z-10 bg-background/80 backdrop-blur-sm border border-primary/30 hover:bg-background/90"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+              <AIAssistantWidget />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Voice Assistant Toggle Button */}
+      {!showVoiceAssistant && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="fixed bottom-8 right-8 z-50"
+        >
+          <Button
+            onClick={() => setShowVoiceAssistant(true)}
+            className="w-16 h-16 rounded-full bg-primary hover:bg-primary/90 text-black shadow-lg hover:shadow-xl transition-all"
+          >
+            <Bot className="w-8 h-8" />
+          </Button>
+        </motion.div>
+      )}
     </div>
   );
 };
