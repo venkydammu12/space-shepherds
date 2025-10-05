@@ -1,31 +1,28 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Mic, Volume2 } from 'lucide-react';
-import robotImage from '@/assets/logo-main.png';
+import { Mic, Volume2, Sparkles } from 'lucide-react';
 
 const AIAssistantWidget = () => {
   const widgetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Load ElevenLabs script with pinned version and error handling
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
     script.async = true;
     script.type = 'text/javascript';
     script.crossOrigin = 'anonymous';
-    
+
     script.onload = () => {
       console.log('ElevenLabs widget loaded successfully');
     };
-    
+
     script.onerror = () => {
       console.error('Failed to load ElevenLabs widget');
     };
-    
+
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup script if component unmounts
       if (document.head.contains(script)) {
         document.head.removeChild(script);
       }
@@ -33,118 +30,191 @@ const AIAssistantWidget = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-black via-blue-950/20 to-black rounded-3xl border border-cyan-500/30 overflow-visible flex flex-col items-center justify-center p-8">
-      {/* Robot Avatar - Smaller and at top */}
-      <div className="mb-6 z-0">
+    <div className="relative w-full h-full bg-gradient-to-b from-[#000000] via-[#0a0a0a] to-[#000000] flex flex-col items-center justify-center py-16 px-4 overflow-hidden">
+
+      {/* Animated Background Grid */}
+      <div className="absolute inset-0 opacity-20">
         <motion.div
-          className="relative"
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}
           animate={{
-            scale: [1, 1.05, 1],
-            boxShadow: [
-              '0 0 20px rgba(0, 255, 255, 0.3)',
-              '0 0 40px rgba(0, 255, 255, 0.6)',
-              '0 0 20px rgba(0, 255, 255, 0.3)'
-            ]
+            opacity: [0.1, 0.3, 0.1]
           }}
           transition={{
-            duration: 3,
+            duration: 4,
             repeat: Infinity,
             ease: 'easeInOut'
           }}
-        >
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center border-2 border-cyan-500/50 overflow-hidden">
-            <img
-              src={robotImage}
-              alt="AI Assistant Robot"
-              className="w-20 h-20 object-contain"
-            />
-          </div>
-
-          {/* Scanning Ring */}
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-cyan-400/50"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-          />
-        </motion.div>
+        />
       </div>
 
-      {/* AI Status */}
-      <div className="text-center mb-6 z-0">
-        <h3 className="text-2xl font-bold text-cyan-400 mb-2">ARIA - AI Assistant</h3>
-        <p className="text-cyan-500/80 text-sm mb-3">Autonomous Robotics Intelligence Assistant</p>
-
-        <div className="flex justify-center items-center gap-2">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-green-400 text-sm font-mono">ONLINE</span>
-        </div>
-      </div>
-
-      {/* LARGE ElevenLabs Widget Container */}
-      <div className="w-full max-w-2xl z-50" ref={widgetRef}>
-        <div
-          className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 backdrop-blur-md rounded-3xl border-2 border-cyan-500/50 p-8 shadow-[0_0_50px_rgba(0,255,255,0.3)]"
-        >
-          <div className="text-center mb-8">
-            <div className="flex justify-center items-center gap-4 mb-3">
-              <Mic className="w-8 h-8 text-cyan-400 animate-pulse" />
-              <span className="text-cyan-400 font-bold text-2xl">VOICE INTERFACE</span>
-              <Volume2 className="w-8 h-8 text-cyan-400 animate-pulse" />
-            </div>
-            <p className="text-cyan-400/90 text-lg font-medium">Click the large button below to talk with AI Assistant</p>
-          </div>
-
-          {/* EXPANDED ElevenLabs Widget */}
-          <div
-            className="flex justify-center items-center min-h-[200px] relative z-50"
-            style={{ transform: 'scale(2)', transformOrigin: 'center' }}
-          >
-            <elevenlabs-convai agent-id="agent_3901k6ddjrvqenmbwbevw4xrdv3t"></elevenlabs-convai>
-          </div>
-
-          {/* Instructions */}
-          <div className="mt-16 text-center space-y-2">
-            <div className="text-sm text-cyan-400 font-bold">
-              Ready to Connect
-            </div>
-            <div className="text-xs text-cyan-500/80">
-              The voice button is now 2x larger for easy interaction
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Background Effects - Lower z-index */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {/* Floating Particles */}
-        {[...Array(15)].map((_, i) => (
+      {/* Floating Particles Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
+            className="absolute w-1 h-1 bg-cyan-400/40 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 1, 0.3],
-              scale: [0.5, 1.2, 0.5],
+              y: [0, -30, 0],
+              opacity: [0.2, 1, 0.2],
+              scale: [0.5, 1.5, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3 + Math.random() * 3,
               repeat: Infinity,
               delay: Math.random() * 2,
             }}
           />
         ))}
-
-        {/* Scanning Lines */}
-        <motion.div
-          className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_20px,rgba(0,255,255,0.02)_20px,rgba(0,255,255,0.02)_22px)]"
-          animate={{ x: [-100, 100] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-        />
       </div>
+
+      {/* Header Section */}
+      <motion.div
+        className="text-center mb-12 z-10"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Sparkles className="w-8 h-8 text-cyan-400 animate-pulse" />
+          <h1
+            className="text-5xl font-bold text-cyan-400"
+            style={{
+              letterSpacing: '0.1em',
+              textShadow: '0 0 30px rgba(0, 255, 255, 0.5)'
+            }}
+          >
+            VIRTUAL AI VOICE ASSISTANT
+          </h1>
+          <Sparkles className="w-8 h-8 text-cyan-400 animate-pulse" />
+        </div>
+
+        <p className="text-[#cfcfcf] text-lg max-w-3xl mx-auto leading-relaxed">
+          Talk to your AI-powered ElevenLabs Assistant. Ask questions, get guidance,
+          and experience the future of interactive voice intelligence.
+        </p>
+      </motion.div>
+
+      {/* Main Agent Container */}
+      <motion.div
+        ref={widgetRef}
+        className="relative w-[70%] max-w-[800px] z-20"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        whileHover={{ scale: 1.02 }}
+      >
+        <div
+          className="relative bg-gradient-to-br from-black/80 via-cyan-950/20 to-black/80 backdrop-blur-xl rounded-[20px] border-2 border-cyan-400/60 p-12 transition-all duration-300"
+          style={{
+            boxShadow: `
+              0 0 60px rgba(0, 255, 183, 0.4),
+              inset 0 0 40px rgba(0, 255, 255, 0.1)
+            `
+          }}
+        >
+          {/* Top Header Inside Box */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center items-center gap-4 mb-4">
+              <Mic className="w-10 h-10 text-cyan-400 animate-pulse" />
+              <span
+                className="text-cyan-400 font-bold text-3xl tracking-wider"
+                style={{ textShadow: '0 0 20px rgba(0, 255, 255, 0.6)' }}
+              >
+                VOICE INTERFACE
+              </span>
+              <Volume2 className="w-10 h-10 text-cyan-400 animate-pulse" />
+            </div>
+            <p className="text-cyan-300/90 text-base">
+              Click the button below to start your conversation
+            </p>
+          </div>
+
+          {/* ElevenLabs Widget - Large and Centered */}
+          <div
+            className="flex justify-center items-center min-h-[250px] py-8"
+            style={{
+              transform: 'scale(2.5)',
+              transformOrigin: 'center'
+            }}
+          >
+            <elevenlabs-convai agent-id="agent_3901k6ddjrvqenmbwbevw4xrdv3t"></elevenlabs-convai>
+          </div>
+
+          {/* Status Indicator */}
+          <div className="mt-20 text-center space-y-3">
+            <div className="flex justify-center items-center gap-2">
+              <motion.div
+                className="w-3 h-3 bg-green-400 rounded-full"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [1, 0.5, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity
+                }}
+              />
+              <span className="text-green-400 font-mono text-sm">SYSTEM ONLINE</span>
+            </div>
+            <p className="text-cyan-500/70 text-sm">
+              AI Agent Ready | 2.5x Enlarged for Easy Interaction
+            </p>
+          </div>
+
+          {/* Corner Accents */}
+          <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-cyan-400/70" />
+          <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-cyan-400/70" />
+          <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-cyan-400/70" />
+          <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-cyan-400/70" />
+        </div>
+
+        {/* Outer Glow Effect */}
+        <div
+          className="absolute inset-0 rounded-[20px] opacity-50 blur-xl pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(0, 255, 183, 0.3) 0%, transparent 70%)'
+          }}
+        />
+      </motion.div>
+
+      {/* Bottom Instruction Text */}
+      <motion.div
+        className="text-center mt-12 z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.5 }}
+      >
+        <p className="text-cyan-400/80 text-sm">
+          Professional AI Voice Technology powered by ElevenLabs
+        </p>
+      </motion.div>
+
+      {/* Animated Scan Lines */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none opacity-10"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px)'
+        }}
+        animate={{
+          y: [0, 20, 0]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'linear'
+        }}
+      />
     </div>
   );
 };
