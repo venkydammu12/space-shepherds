@@ -18,7 +18,22 @@ const LiveCameraFeed = () => {
         });
 
         if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
+          const videoElement = videoRef.current;
+          videoElement.srcObject = mediaStream;
+          
+          // Wait for metadata to load before playing
+          videoElement.onloadedmetadata = async () => {
+            try {
+              // Force play with proper promise handling
+              const playPromise = videoElement.play();
+              if (playPromise !== undefined) {
+                await playPromise;
+                console.log('Camera feed started successfully');
+              }
+            } catch (playError) {
+              console.error('Video play failed:', playError);
+            }
+          };
         }
 
         setStream(mediaStream);
