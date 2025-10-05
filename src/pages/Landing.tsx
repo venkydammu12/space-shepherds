@@ -159,10 +159,14 @@ const Landing = () => {
             {/* Let's Get In Button */}
             <Button
               onClick={handleLetsGetIn}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4 rounded-xl text-lg shadow-glow"
+              className="relative backdrop-blur-xl bg-gradient-to-r from-primary/20 to-cyan-500/20 border border-primary/40 hover:border-primary/60 text-white font-semibold px-6 py-2.5 rounded-lg text-sm shadow-lg hover:shadow-primary/50 transition-all duration-300 hover:scale-105"
+              style={{
+                backdropFilter: 'blur(16px)',
+                boxShadow: '0 8px 32px 0 rgba(0, 245, 255, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
             >
-              <Rocket className="w-5 h-5 mr-3" />
-              🚀 Let's Get In
+              <Rocket className="w-4 h-4 mr-2" />
+              Let's Get In
             </Button>
           </motion.div>
         )}
