@@ -23,6 +23,12 @@ const RoboEyeVision = () => {
 
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
+          // Explicitly play the video
+          try {
+            await videoRef.current.play();
+          } catch (playError) {
+            console.error('Video play failed:', playError);
+          }
         }
 
         setStream(mediaStream);
@@ -43,6 +49,15 @@ const RoboEyeVision = () => {
       }
     };
   }, []);
+
+  // Cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   const handleZoomIn = () => {
     setZoom(prev => Math.min(prev + 0.2, 3));
