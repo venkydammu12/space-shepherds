@@ -1,30 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Mic, MicOff, Volume2, VolumeX, Camera, CameraOff, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Globe, Satellite, Activity, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Bot } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Activity, CircleCheck as CheckCircle, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import RobotVision from '@/components/RobotVision';
-import LiveCameraFeed from '@/components/LiveCameraFeed';
 import AIWasteDetector from '@/components/AIWasteDetector';
 import Robot3DModel from '@/components/Robot3DModel';
 import AIAssistantWidget from '@/components/AIAssistantWidget';
 
 const VirtualPrototypePage = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
+
   // States
   const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control' | 'assistant'>('dashboard');
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [cameraActive, setCameraActive] = useState(false);
   const [robotStatus, setRobotStatus] = useState<'idle' | 'scanning' | 'moving' | 'collecting'>('idle');
-  const [chatHistory, setChatHistory] = useState<{type: 'user' | 'robot', message: string}[]>([
-    { type: 'robot', message: 'Virtual Prototype System Online. All systems ready for demonstration.' }
-  ]);
-  
-  // Refs
 
   // Mission Control Data
   const [missionData, setMissionData] = useState({
@@ -59,94 +47,9 @@ const VirtualPrototypePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-
-  // Voice Functions
-  const speak = (text: string) => {
-    if ('speechSynthesis' in window) {
-      setIsSpeaking(true);
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 0.7;
-      utterance.volume = 0.8;
-      
-      utterance.onend = () => setIsSpeaking(false);
-      speechSynthesis.speak(utterance);
-    }
-  };
-
-  const handleVoiceCommand = (command: string) => {
-    const responses: { [key: string]: { message: string, status?: typeof robotStatus } } = {
-      'scan': { 
-        message: 'Initiating orbital scan. All sensors active. Detecting debris signatures in real-time.', 
-        status: 'scanning' 
-      },
-      'collect': { 
-        message: 'Debris collection sequence activated. Deploying collection arms and magnetic systems.', 
-        status: 'collecting' 
-      },
-      'status': { 
-        message: `Virtual prototype operational. ${missionData.activeRobots} robots active. ${missionData.debrisDetected} objects detected. Success rate ${missionData.successRate}%.` 
-      },
-      'camera': {
-        message: 'Activating camera systems for live object detection and analysis.',
-      },
-      'dashboard': {
-        message: 'Mission control dashboard active. All systems monitoring orbital debris cleanup operations.',
-      }
-    };
-
-    const matchedCommand = Object.keys(responses).find(key => 
-      command.toLowerCase().includes(key)
-    );
-
-    if (matchedCommand) {
-      const response = responses[matchedCommand];
-      setChatHistory(prev => [...prev, 
-        { type: 'user', message: command },
-        { type: 'robot', message: response.message }
-      ]);
-      speak(response.message);
-      if (response.status) {
-        setRobotStatus(response.status);
-        setTimeout(() => setRobotStatus('idle'), 5000);
-      }
-    } else {
-      const defaultResponse = 'Virtual prototype system ready. Please specify your command for demonstration.';
-      setChatHistory(prev => [...prev, 
-        { type: 'user', message: command },
-        { type: 'robot', message: defaultResponse }
-      ]);
-      speak(defaultResponse);
-    }
-  };
-
-  const toggleListening = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      toast({
-        title: "Not Supported",
-        description: "Speech recognition not available in this browser.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (isListening) {
-      setIsListening(false);
-    } else {
-      const recognition = new (window as any).webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      
-      recognition.onresult = (event: any) => {
-        const command = event.results[0][0].transcript;
-        handleVoiceCommand(command);
-      };
-      
-      recognition.start();
-    }
+  const handleScanCommand = () => {
+    setRobotStatus('scanning');
+    setTimeout(() => setRobotStatus('idle'), 5000);
   };
 
   return (
@@ -326,9 +229,9 @@ const VirtualPrototypePage = () => {
                   <div className="glass-card p-6 rounded-2xl">
                     <h3 className="text-xl font-bold text-accent mb-4">System Controls</h3>
                     <div className="space-y-4">
-                      <Button 
+                      <Button
                         className="w-full bg-primary hover:bg-primary/90 text-black"
-                        onClick={() => handleVoiceCommand('scan area')}
+                        onClick={handleScanCommand}
                       >
                         <Radar className="w-4 h-4 mr-2" />
                         Initiate Scan
