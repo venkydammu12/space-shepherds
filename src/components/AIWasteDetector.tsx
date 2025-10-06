@@ -30,39 +30,58 @@ const AIWasteDetector = () => {
     loadModel();
   }, []);
 
-  // Auto-start camera on mount
+  // Auto-start camera on mount with fallback
   useEffect(() => {
     const initCamera = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: 'environment',
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
-        });
+        setStatusMessage('Connecting to camera...');
+        let mediaStream: MediaStream | null = null;
 
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-          
-          // Wait for video to be ready
-          videoRef.current.onloadedmetadata = () => {
-            if (videoRef.current) {
-              videoRef.current.play()
-                .then(() => {
-                  console.log('Camera started successfully');
-                  setStatusMessage('Camera Connected ✅');
-                  setCameraStatus('active');
-                })
-                .catch((error) => {
-                  console.error('Play error:', error);
-                  setStatusMessage('❌ Failed to start camera');
-                });
-            }
-          };
+        // Try back camera first (environment)
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: { ideal: 'environment' },
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            },
+            audio: false
+          });
+        } catch (backCameraError) {
+          // Fallback to front camera if back camera fails
+          console.log('Back camera failed, trying front camera:', backCameraError);
+          mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: 'user',
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            },
+            audio: false
+          });
         }
 
-        setStream(mediaStream);
+        if (videoRef.current && mediaStream) {
+          const videoElement = videoRef.current;
+          videoElement.srcObject = mediaStream;
+
+          // Force immediate play
+          videoElement.onloadedmetadata = async () => {
+            try {
+              await videoElement.play();
+              console.log('Camera feed started successfully');
+              setStatusMessage('Camera Connected ✅');
+              setCameraStatus('active');
+              setStream(mediaStream);
+            } catch (playError) {
+              console.error('Play error:', playError);
+              setStatusMessage('❌ Failed to start camera');
+            }
+          };
+
+          // Ensure video element is visible
+          videoElement.style.display = 'block';
+          videoElement.style.visibility = 'visible';
+        }
       } catch (error) {
         console.error('Camera access denied:', error);
         setCameraStatus('blocked');
@@ -82,14 +101,22 @@ const AIWasteDetector = () => {
     };
   }, []);
 
-  // Voice synthesis function
+  // Voice synthesis function with throttle
+  const lastSpokenRef = useRef<Map<string, number>>(new Map());
   const speak = (text: string) => {
     if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.pitch = 1;
-      utterance.rate = 1;
-      utterance.volume = 0.8;
-      window.speechSynthesis.speak(utterance);
+      const now = Date.now();
+      const lastSpoken = lastSpokenRef.current.get(text) || 0;
+
+      // Only speak if not spoken in last 5 seconds
+      if (now - lastSpoken > 5000) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.pitch = 1;
+        utterance.rate = 1;
+        utterance.volume = 0.8;
+        window.speechSynthesis.speak(utterance);
+        lastSpokenRef.current.set(text, now);
+      }
     }
   };
 
@@ -98,13 +125,17 @@ const AIWasteDetector = () => {
     if (!model || !videoRef.current || !canvasRef.current) return;
 
     setDetectionActive(true);
-    setStatusMessage('Detecting objects...');
+    setStatusMessage('AI Detection Active ✅');
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
     if (!ctx) return;
+
+    // Match canvas dimensions to video
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
 
     // Clear any existing interval
     if (detectionIntervalRef.current) {
@@ -114,39 +145,57 @@ const AIWasteDetector = () => {
     detectionIntervalRef.current = window.setInterval(async () => {
       try {
         const predictions = await model.detect(video);
-        
+
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw predictions
         predictions.forEach((prediction) => {
           const [x, y, width, height] = prediction.bbox;
-          
-          // Draw bounding box with cyan theme
-          ctx.strokeStyle = '#00AAFF';
+
+          // Scale coordinates to canvas size
+          const scaleX = canvas.width / video.videoWidth;
+          const scaleY = canvas.height / video.videoHeight;
+
+          const scaledX = x * scaleX;
+          const scaledY = y * scaleY;
+          const scaledWidth = width * scaleX;
+          const scaledHeight = height * scaleY;
+
+          // Draw bounding box with green glow
+          ctx.strokeStyle = '#00FF88';
           ctx.lineWidth = 3;
-          ctx.strokeRect(x, y, width, height);
+          ctx.shadowColor = '#00FF88';
+          ctx.shadowBlur = 10;
+          ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
+          ctx.shadowBlur = 0;
 
           // Draw label background
-          ctx.fillStyle = '#00AAFF';
-          const text = `${prediction.class} (${Math.round(prediction.score * 100)}%)`;
+          const text = `${prediction.class} ${Math.round(prediction.score * 100)}%`;
+          ctx.font = 'bold 16px "Inter", sans-serif';
           const textWidth = ctx.measureText(text).width;
-          ctx.fillRect(x, y > 20 ? y - 20 : y, textWidth + 10, 20);
+
+          ctx.fillStyle = 'rgba(0, 255, 136, 0.9)';
+          ctx.fillRect(
+            scaledX,
+            scaledY > 25 ? scaledY - 25 : scaledY,
+            textWidth + 16,
+            24
+          );
 
           // Draw label text
           ctx.fillStyle = '#000';
-          ctx.font = 'bold 14px "Inter", sans-serif';
-          ctx.fillText(text, x + 5, y > 20 ? y - 5 : y + 15);
+          ctx.fillText(text, scaledX + 8, scaledY > 25 ? scaledY - 7 : scaledY + 17);
 
           // Voice feedback for high-confidence detections
-          if (prediction.score > 0.6) {
+          if (prediction.score > 0.7) {
             speak(`Detected ${prediction.class}`);
           }
         });
       } catch (error) {
         console.error('Detection error:', error);
       }
-    }, 1500);
+    }, 1000);
   };
 
   // Stop detection
