@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import RobotVision from '@/components/RobotVision';
 import LiveCameraFeed from '@/components/LiveCameraFeed';
+import AIWasteDetector from '@/components/AIWasteDetector';
 import Robot3DModel from '@/components/Robot3DModel';
 import AIAssistantWidget from '@/components/AIAssistantWidget';
 
@@ -381,7 +382,7 @@ const VirtualPrototypePage = () => {
                 exit={{ opacity: 0, x: 50 }}
                 className="h-full"
               >
-                <LiveCameraFeed />
+                <AIWasteDetector />
               </motion.div>
             )}
 
