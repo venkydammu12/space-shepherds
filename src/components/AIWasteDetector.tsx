@@ -37,25 +37,27 @@ const AIWasteDetector = () => {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: 'environment',
-            width: { ideal: 420 },
-            height: { ideal: 320 }
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
           }
         });
 
         if (videoRef.current) {
-          const videoElement = videoRef.current;
-          videoElement.srcObject = mediaStream;
+          videoRef.current.srcObject = mediaStream;
           
-          videoElement.onloadedmetadata = async () => {
-            try {
-              const playPromise = videoElement.play();
-              if (playPromise !== undefined) {
-                await playPromise;
-                setStatusMessage('Camera Connected ✅');
-                setCameraStatus('active');
-              }
-            } catch (playError) {
-              console.error('Video play failed:', playError);
+          // Wait for video to be ready
+          videoRef.current.onloadedmetadata = () => {
+            if (videoRef.current) {
+              videoRef.current.play()
+                .then(() => {
+                  console.log('Camera started successfully');
+                  setStatusMessage('Camera Connected ✅');
+                  setCameraStatus('active');
+                })
+                .catch((error) => {
+                  console.error('Play error:', error);
+                  setStatusMessage('❌ Failed to start camera');
+                });
             }
           };
         }
@@ -169,7 +171,7 @@ const AIWasteDetector = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold hero-title mb-4">
-            🤖 AI ROBOT EYE
+            AI ROBOT EYE
             <br />
             <span className="text-primary">WASTE DETECTION</span>
           </h1>
@@ -198,12 +200,14 @@ const AIWasteDetector = () => {
                     playsInline
                     muted
                     className="w-full h-full object-cover"
+                    style={{ display: 'block' }}
                   />
                   <canvas
                     ref={canvasRef}
                     width={1280}
                     height={720}
                     className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                    style={{ mixBlendMode: 'normal' }}
                   />
                   
                   {/* Cinematic Overlay Elements */}
@@ -301,7 +305,7 @@ const AIWasteDetector = () => {
                 ) : (
                   <>
                     <Play className="w-6 h-6 mr-3" />
-                    🚀 Start AI Detection
+                    Start AI Detection
                   </>
                 )}
               </Button>
