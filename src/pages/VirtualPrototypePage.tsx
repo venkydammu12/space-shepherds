@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Camera, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Activity, CircleCheck as CheckCircle, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import AIWasteDetector from '@/components/AIWasteDetector';
+import VirtualRobotCamera from '@/components/VirtualRobotCamera';
 import Robot3DModel from '@/components/Robot3DModel';
 import AIAssistantWidget from '@/components/AIAssistantWidget';
 
@@ -285,7 +285,7 @@ const VirtualPrototypePage = () => {
                 exit={{ opacity: 0, x: 50 }}
                 className="h-full"
               >
-                <AIWasteDetector />
+                <VirtualRobotCamera />
               </motion.div>
             )}
 
