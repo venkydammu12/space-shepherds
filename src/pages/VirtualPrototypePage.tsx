@@ -1,18 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Camera, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Activity, CircleCheck as CheckCircle, Bot } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, MapPin, Radar, Cpu, Battery, Zap, Target, Monitor, Activity, CircleCheck as CheckCircle, Bot, Navigation2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import VirtualRobotCamera from '@/components/VirtualRobotCamera';
+import { useToast } from '@/hooks/use-toast';
+import AIWasteDetector from '@/components/AIWasteDetector';
 import Robot3DModel from '@/components/Robot3DModel';
 import AIAssistantWidget from '@/components/AIAssistantWidget';
+import NavigatorMap from '@/components/NavigatorMap';
+
+type WorkflowState = 'idle' | 'scanning' | 'path-found' | 'collecting' | 'returning' | 'completed';
 
 const VirtualPrototypePage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // States
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control' | 'assistant'>('dashboard');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'camera' | 'control' | 'assistant' | 'navigator'>('dashboard');
   const [robotStatus, setRobotStatus] = useState<'idle' | 'scanning' | 'moving' | 'collecting'>('idle');
+
+  // Navigator states
+  const [workflowState, setWorkflowState] = useState<WorkflowState>('idle');
+  const [robotPosition, setRobotPosition] = useState({ x: 20, y: 80 });
+  const [debrisPosition, setDebrisPosition] = useState<{ x: number; y: number } | null>(null);
+  const [showPath, setShowPath] = useState(false);
+  const synth = useRef(window.speechSynthesis);
 
   // Mission Control Data
   const [missionData, setMissionData] = useState({
@@ -50,6 +62,95 @@ const VirtualPrototypePage = () => {
   const handleScanCommand = () => {
     setRobotStatus('scanning');
     setTimeout(() => setRobotStatus('idle'), 5000);
+  };
+
+  // Navigator functions
+  const speak = (text: string) => {
+    if (synth.current) {
+      synth.current.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      synth.current.speak(utterance);
+    }
+  };
+
+  const handleIdentifyWastage = () => {
+    setWorkflowState('scanning');
+    speak('Scanning environment for debris. Please wait.');
+
+    setTimeout(() => {
+      const debris = {
+        x: Math.random() * 60 + 20,
+        y: Math.random() * 60 + 20
+      };
+      setDebrisPosition(debris);
+      setWorkflowState('path-found');
+      speak('Debris identified at marked location. Analyzing safest route.');
+
+      setTimeout(() => {
+        setShowPath(true);
+        speak('Safest and shortest path is now displayed.');
+      }, 2000);
+    }, 3000);
+  };
+
+  const handleCollect = () => {
+    if (!debrisPosition) return;
+
+    setWorkflowState('collecting');
+    speak('Moving to debris location.');
+
+    const steps = 30;
+    let currentStep = 0;
+
+    const interval = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+
+      setRobotPosition({
+        x: robotPosition.x + (debrisPosition.x - robotPosition.x) * progress,
+        y: robotPosition.y + (debrisPosition.y - robotPosition.y) * progress
+      });
+
+      if (currentStep >= steps) {
+        clearInterval(interval);
+        setDebrisPosition(null);
+        setShowPath(false);
+        setWorkflowState('completed');
+        speak('Wastage collected successfully.');
+        toast({
+          title: "Success",
+          description: "Debris collected successfully!",
+        });
+      }
+    }, 100);
+  };
+
+  const handleReturn = () => {
+    setWorkflowState('returning');
+    speak('Returning to base location.');
+
+    const startPos = { ...robotPosition };
+    const targetPos = { x: 20, y: 80 };
+    const steps = 30;
+    let currentStep = 0;
+
+    const interval = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+
+      setRobotPosition({
+        x: startPos.x + (targetPos.x - startPos.x) * progress,
+        y: startPos.y + (targetPos.y - startPos.y) * progress
+      });
+
+      if (currentStep >= steps) {
+        clearInterval(interval);
+        setWorkflowState('idle');
+        speak('Returned to base. Ready for next mission.');
+      }
+    }, 100);
   };
 
   return (
@@ -104,11 +205,12 @@ const VirtualPrototypePage = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center mb-12"
           >
-            <div className="glass-card p-2 rounded-2xl flex gap-2">
+            <div className="glass-card p-2 rounded-2xl flex gap-2 flex-wrap justify-center">
               {[
                 { id: 'dashboard', label: 'Mission Control', icon: Monitor },
                 { id: 'camera', label: 'Live Camera', icon: Camera },
                 { id: 'control', label: '3D Control', icon: Cpu },
+                { id: 'navigator', label: 'Navigator', icon: Navigation2 },
                 { id: 'assistant', label: 'AI Assistant', icon: Bot }
               ].map((tab) => (
                 <Button
@@ -285,7 +387,7 @@ const VirtualPrototypePage = () => {
                 exit={{ opacity: 0, x: 50 }}
                 className="h-full"
               >
-                <VirtualRobotCamera />
+                <AIWasteDetector />
               </motion.div>
             )}
 
@@ -342,6 +444,92 @@ const VirtualPrototypePage = () => {
                       <div className="text-sm">
                         <strong>Interactive:</strong> Click and drag to rotate 3D model
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Navigator Section */}
+            {activeSection === 'navigator' && (
+              <motion.div
+                key="navigator"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+                className="grid lg:grid-cols-3 gap-6"
+              >
+                <div className="lg:col-span-2">
+                  <NavigatorMap
+                    robotPosition={robotPosition}
+                    debrisPosition={debrisPosition}
+                    showPath={showPath}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="glass-card p-6 rounded-2xl">
+                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                      <Target className="w-5 h-5" />
+                      Mission Control
+                    </h3>
+
+                    <div className="space-y-3">
+                      <Button
+                        onClick={handleIdentifyWastage}
+                        disabled={workflowState !== 'idle' && workflowState !== 'completed'}
+                        className="w-full bg-primary hover:bg-primary/90 text-black font-bold"
+                      >
+                        <Target className="w-4 h-4 mr-2" />
+                        Identify Wastage
+                      </Button>
+
+                      <Button
+                        onClick={handleCollect}
+                        disabled={workflowState !== 'path-found'}
+                        className="w-full bg-accent hover:bg-accent/90 text-black font-bold"
+                      >
+                        <Navigation2 className="w-4 h-4 mr-2" />
+                        Go & Collect
+                      </Button>
+
+                      <Button
+                        onClick={handleReturn}
+                        disabled={workflowState !== 'completed'}
+                        className="w-full border-primary text-primary hover:bg-primary/20"
+                        variant="outline"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Return to Base
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="glass-card p-6 rounded-2xl">
+                    <h3 className="text-lg font-bold text-accent mb-3 flex items-center gap-2">
+                      <Activity className="w-5 h-5" />
+                      Status
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${workflowState === 'idle' ? 'bg-green-400' : 'bg-gray-600'}`} />
+                        <span className="text-muted-foreground">System: <span className="text-primary font-bold">Ready</span></span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${debrisPosition ? 'bg-red-400 animate-pulse' : 'bg-gray-600'}`} />
+                        <span className="text-muted-foreground">Debris: <span className="text-accent font-bold">{debrisPosition ? 'Detected' : 'None'}</span></span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${showPath ? 'bg-blue-400 animate-pulse' : 'bg-gray-600'}`} />
+                        <span className="text-muted-foreground">Path: <span className="text-primary font-bold">{showPath ? 'Active' : 'Inactive'}</span></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="glass-card p-6 rounded-2xl">
+                    <h3 className="text-xs font-bold text-muted-foreground mb-2">COORDINATES</h3>
+                    <div className="text-primary font-mono text-sm">
+                      {robotPosition.x.toFixed(1)}, {robotPosition.y.toFixed(1)}
                     </div>
                   </div>
                 </div>
