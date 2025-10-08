@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog, Rocket, Chrome as Home, Eye, Monitor, Radar } from 'lucide-react';
+import { ChevronRight, Zap, Target, Globe, X, Menu, Users, Cog, Rocket, Chrome as Home, Eye, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CinematicLogo from '@/components/CinematicLogo';
 import SpaceBackground from '@/components/SpaceBackground';
@@ -53,9 +53,6 @@ const Landing = () => {
           case 'dashboard':
             navigate('/mission-control');
             break;
-          case 'robo-scan':
-            navigate('/robo-navigator');
-            break;
           case 'impact':
             navigate('/impact');
             break;
@@ -74,7 +71,6 @@ const Landing = () => {
     { id: 'virtual-robot', label: 'Virtual Robot', icon: Users },
     { id: 'robot-eye', label: 'Robot Eye', icon: Eye },
     { id: 'dashboard', label: 'Dashboard', icon: Monitor },
-    { id: 'robo-scan', label: 'Robo Scan & Control', icon: Radar },
     { id: 'impact', label: 'Impact', icon: Globe }
   ];
   const navigationCards = [
