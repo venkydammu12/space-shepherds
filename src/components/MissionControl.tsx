@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Radar, Activity, Zap, Target, Home, AlertTriangle } from 'lucide-react';
+import { Radar, Activity, Zap, Target, Home, AlertTriangle, Eye, Users, Globe, Monitor, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import Earth3D from './Earth3D';
 import VoiceAssistant from './VoiceAssistant';
 import CameraFeed from './CameraFeed';
@@ -24,6 +25,7 @@ interface MissionData {
 }
 
 const MissionControl = () => {
+  const navigate = useNavigate();
   const [selectedDebris, setSelectedDebris] = useState<DebrisObject | null>(null);
   const [robotStatus, setRobotStatus] = useState<'standby' | 'collecting' | 'returning' | 'docked'>('standby');
   const [missionData, setMissionData] = useState<MissionData>({
@@ -34,6 +36,17 @@ const MissionControl = () => {
     currentMission: 'Orbital Scan Active'
   });
   const { toast } = useToast();
+
+  const navigationItems = [
+    { id: 'home', label: 'Home', icon: Home, path: '/' },
+    { id: 'problem', label: 'Problem', icon: AlertTriangle, path: '/problem' },
+    { id: 'solution', label: 'Solution', icon: Zap, path: '/solution' },
+    { id: 'virtual-robot', label: 'Virtual Robot', icon: Users, path: '/virtual-prototype' },
+    { id: 'robot-eye', label: 'Robot Eye', icon: Eye, path: '/robo-eye-camera' },
+    { id: 'dashboard', label: 'Dashboard', icon: Monitor, path: '/mission-control', active: true },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Rocket, path: '/ai-robot' },
+    { id: 'impact', label: 'Impact', icon: Globe, path: '/impact' }
+  ];
 
   // Simulate live mission data updates
   useEffect(() => {
@@ -128,6 +141,82 @@ const MissionControl = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Glass Navigation Bar */}
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-[#0B1426]/80 border-b border-[#00F5FF]/20">
+        <div className="container mx-auto px-6">
+          <nav className="flex items-center justify-between py-4">
+            {/* Logo/Title */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#00F5FF]/20 border border-[#00F5FF]/40 flex items-center justify-center">
+                <Monitor className="w-6 h-6 text-[#00F5FF]" />
+              </div>
+              <span className="text-lg font-bold text-[#00F5FF] hidden sm:block">Mission Control</span>
+            </div>
+
+            {/* Navigation Items */}
+            <div className="hidden lg:flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => navigate(item.path)}
+                  className={`group relative flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                    item.active
+                      ? 'bg-[#00F5FF]/20 text-[#00F5FF] border border-[#00F5FF]/40'
+                      : 'text-[#00F5FF]/70 hover:text-[#00F5FF] hover:bg-[#00F5FF]/10'
+                  }`}
+                  style={{
+                    boxShadow: item.active ? '0 0 20px rgba(0, 245, 255, 0.3)' : 'none'
+                  }}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="text-sm font-medium">{item.label}</span>
+                  {item.active && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#00F5FF] rounded-full shadow-[0_0_10px_rgba(0,245,255,0.8)]"></div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-[#00F5FF] hover:bg-[#00F5FF]/20"
+                onClick={() => {
+                  const mobileNav = document.getElementById('mobile-nav');
+                  if (mobileNav) {
+                    mobileNav.classList.toggle('hidden');
+                  }
+                }}
+              >
+                <Target className="w-5 h-5" />
+              </Button>
+            </div>
+          </nav>
+
+          {/* Mobile Navigation */}
+          <div id="mobile-nav" className="hidden lg:hidden pb-4">
+            <div className="grid grid-cols-2 gap-2">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => navigate(item.path)}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 ${
+                    item.active
+                      ? 'bg-[#00F5FF]/20 text-[#00F5FF] border border-[#00F5FF]/40'
+                      : 'text-[#00F5FF]/70 hover:text-[#00F5FF] hover:bg-[#00F5FF]/10'
+                  }`}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="text-xs font-medium">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
