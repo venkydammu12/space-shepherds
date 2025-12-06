@@ -6,17 +6,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RouteLoader from "./components/RouteLoader";
 
-// Lazy load all route components for optimal bundle splitting
-const Landing = lazy(() => import("./pages/Landing"));
-const ProblemPage = lazy(() => import("./pages/ProblemPage"));
-const SolutionPage = lazy(() => import("./pages/SolutionPage"));
-const VirtualPrototypePage = lazy(() => import("./pages/VirtualPrototypePage"));
-const ImpactPage = lazy(() => import("./pages/ImpactPage"));
-const MissionControl = lazy(() => import("./components/MissionControl"));
-const RoboNavigator = lazy(() => import("./pages/RoboNavigator"));
-const RoboEyeCamera = lazy(() => import("./pages/RoboEyeCamera"));
-const RoboEyeVision = lazy(() => import("./pages/RoboEyeVision"));
-const AIRobotPage = lazy(() => import("./pages/AIRobotPage"));
+// Lazy load all route components
+const Index = lazy(() => import("./pages/Index"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -29,16 +22,9 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<RouteLoader />}>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/problem" element={<ProblemPage />} />
-            <Route path="/solution" element={<SolutionPage />} />
-            <Route path="/virtual-prototype" element={<VirtualPrototypePage />} />
-            <Route path="/impact" element={<ImpactPage />} />
-            <Route path="/mission-control" element={<MissionControl />} />
-            <Route path="/robo-navigator" element={<RoboNavigator />} />
-            <Route path="/robo-eye-camera" element={<RoboEyeCamera />} />
-            <Route path="/robo-eye-vision" element={<RoboEyeVision />} />
-            <Route path="/ai-robot" element={<AIRobotPage />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
