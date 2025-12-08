@@ -63,9 +63,6 @@ export const Navbar = () => {
             <Rocket className="w-8 h-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
             <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
           </div>
-          <span className="font-orbitron font-bold text-lg md:text-xl tracking-wider gradient-text">
-            AI SWARM
-          </span>
         </Link>
 
         {/* Desktop Navigation */}
