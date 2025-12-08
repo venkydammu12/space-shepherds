@@ -10,6 +10,9 @@ import RouteLoader from "./components/RouteLoader";
 const Index = lazy(() => import("./pages/Index"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ProblemPage = lazy(() => import("./pages/ProblemPage"));
+const SolutionPage = lazy(() => import("./pages/SolutionPage"));
+const ImpactPage = lazy(() => import("./pages/ImpactPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -25,6 +28,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/problem" element={<ProblemPage />} />
+            <Route path="/solution" element={<SolutionPage />} />
+            <Route path="/impact" element={<ImpactPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -6,11 +6,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/#problem', label: 'Problem' },
-  { href: '/#solution', label: 'Solution' },
-  { href: '/#benefits', label: 'Benefits' },
-  { href: '/#timeline', label: 'Timeline' },
+  { href: '/', label: 'Home', scrollId: 'home' },
+  { href: '/problem', label: 'Problem', scrollId: 'problem' },
+  { href: '/solution', label: 'Solution', scrollId: 'solution' },
+  { href: '/impact', label: 'Impact', scrollId: 'impact' },
 ];
 
 export const Navbar = () => {
@@ -39,13 +38,14 @@ export const Navbar = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, scrollId?: string) => {
     setIsOpen(false);
-    if (href.startsWith('/#')) {
-      const id = href.replace('/#', '');
-      const element = document.getElementById(id);
+    // If on home page and there's a scrollId, scroll to section
+    if (location.pathname === '/' && scrollId) {
+      const element = document.getElementById(scrollId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+        return;
       }
     }
   };
@@ -73,8 +73,13 @@ export const Navbar = () => {
           {navLinks.map((link) => (
             <Link
               key={link.href}
-              to={link.href}
-              onClick={() => handleNavClick(link.href)}
+              to={location.pathname === '/' && link.scrollId ? '#' : link.href}
+              onClick={(e) => {
+                if (location.pathname === '/' && link.scrollId) {
+                  e.preventDefault();
+                  handleNavClick(link.href, link.scrollId);
+                }
+              }}
               className="font-space text-sm tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300 relative group"
             >
               {link.label}
@@ -118,8 +123,15 @@ export const Navbar = () => {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                to={link.href}
-                onClick={() => handleNavClick(link.href)}
+                to={location.pathname === '/' && link.scrollId ? '#' : link.href}
+                onClick={(e) => {
+                  if (location.pathname === '/' && link.scrollId) {
+                    e.preventDefault();
+                    handleNavClick(link.href, link.scrollId);
+                  } else {
+                    setIsOpen(false);
+                  }
+                }}
                 className="font-space text-lg text-foreground hover:text-primary transition-colors py-2"
               >
                 {link.label}
