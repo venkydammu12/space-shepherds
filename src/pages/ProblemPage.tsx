@@ -4,6 +4,7 @@ import { AlertTriangle, Satellite, Zap, ArrowLeft, ArrowRight } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import Navbar from '@/components/Navbar';
 
 const ProblemPage = () => {
   const navigate = useNavigate();
@@ -127,6 +128,7 @@ const ProblemPage = () => {
     <div className="min-h-screen relative overflow-hidden">
       {/* Background */}
       <div className="fixed inset-0 bg-gradient-cosmic" />
+      <Navbar />
       
       {/* Navigation */}
       <div className="fixed top-8 left-8 right-8 z-40 flex justify-between items-center">

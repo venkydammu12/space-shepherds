@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Chrome as Home, Globe, Leaf, Users, Target, TrendingUp, Heart, Zap, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Navbar from '@/components/Navbar';
 
 const ImpactPage = () => {
   const navigate = useNavigate();
@@ -91,6 +92,7 @@ const ImpactPage = () => {
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="fixed inset-0 bg-gradient-cosmic" />
+      <Navbar />
       
       <div className="fixed top-8 left-8 right-8 z-40 flex justify-between items-center">
         <Button variant="outline" onClick={() => navigate('/virtual-prototype')}>
