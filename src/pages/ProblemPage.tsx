@@ -1,8 +1,8 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  AlertTriangle, Satellite, Zap, ArrowLeft, ArrowRight, 
-  Radio, Users, DollarSign, Globe, TrendingUp, Shield
+  AlertTriangle, Satellite, Users, DollarSign, Globe, 
+  ArrowLeft, ArrowRight, TrendingUp, Radio, Zap, Eye, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRef } from 'react';
@@ -13,57 +13,81 @@ const ProblemPage = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-
-  const problemStats = [
-    { value: "34,000+", label: "Tracked Objects", description: "Large debris in orbit" },
-    { value: "900,000", label: "1-10cm Pieces", description: "Untracked fragments" },
-    { value: "130M+", label: "Tiny Fragments", description: "Microscopic debris" },
-    { value: "17,500", label: "MPH Speed", description: "Average debris velocity" },
-  ];
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -150]);
 
   const debrisGrowthData = [
-    { year: "1960", count: 50 },
-    { year: "1980", count: 5000 },
-    { year: "2000", count: 12000 },
-    { year: "2010", count: 22000 },
-    { year: "2020", count: 34000 },
-    { year: "2024", count: 42000 },
+    { year: "1960", count: 50, height: 2 },
+    { year: "1970", count: 2000, height: 8 },
+    { year: "1980", count: 5000, height: 15 },
+    { year: "1990", count: 8000, height: 22 },
+    { year: "2000", count: 12000, height: 32 },
+    { year: "2010", count: 22000, height: 55 },
+    { year: "2020", count: 34000, height: 80 },
+    { year: "2024", count: 42000, height: 100 },
   ];
 
   const riskCategories = [
     {
       icon: Satellite,
       title: "Risk to Satellites",
-      description: "Navigation, communication, weather, and defense satellites face constant collision threats. GPS, internet, and military systems depend on safe orbital operations.",
-      color: "primary"
+      description: "Navigation systems like GPS, communication networks, weather satellites, and defense systems face constant collision threats. Modern life depends on safe orbital operations.",
+      color: "primary",
+      stats: "4,000+ active satellites at risk"
     },
     {
       icon: Users,
       title: "Risk to ISS & Astronauts",
-      description: "Spacewalks become increasingly dangerous. ISS performs emergency maneuvers multiple times per year. Human lives are at stake during every mission.",
-      color: "destructive"
+      description: "Spacewalks become increasingly dangerous. ISS performs emergency avoidance maneuvers multiple times per year. Human lives are at stake during every mission.",
+      color: "destructive",
+      stats: "27+ debris avoidance maneuvers since 1999"
     },
     {
       icon: DollarSign,
       title: "Economic Damage",
-      description: "Billions lost yearly in satellite damage, mission delays, and insurance costs. Space industry valued at $400B+ is under threat.",
-      color: "accent"
+      description: "Billions lost yearly in satellite damage, mission delays, and insurance costs. The global space industry valued at $400B+ is under growing threat.",
+      color: "accent",
+      stats: "$10B+ in potential losses annually"
     },
     {
       icon: Globe,
       title: "Global Safety Issue",
-      description: "Affects all nations. Debris doesn't respect borders. International cooperation essential but insufficient without active cleanup.",
-      color: "primary"
+      description: "Space debris affects all nations equally. Debris doesn't respect borders. International cooperation is essential but insufficient without active cleanup.",
+      color: "primary",
+      stats: "195 countries affected globally"
     },
   ];
 
-  const kesslerFacts = [
-    "A single collision creates thousands of new debris pieces",
-    "Chain reactions can make orbits unusable for centuries",
-    "Low Earth Orbit most at risk - where most satellites operate",
-    "Current tracking cannot detect objects smaller than 10cm",
-    "Debris travels 10x faster than a bullet",
+  const crisisPoints = [
+    {
+      icon: AlertTriangle,
+      text: "Space is becoming dangerously crowded with tiny + large debris fragments",
+      color: "destructive"
+    },
+    {
+      icon: Zap,
+      text: "Even a 1 cm object can destroy satellites due to extreme orbital velocity (17,500 mph)",
+      color: "accent"
+    },
+    {
+      icon: Users,
+      text: "Astronauts on ISS have increasing risk during spacewalks and EVA missions",
+      color: "primary"
+    },
+    {
+      icon: Radio,
+      text: "Satellites, rockets, GPS, and communication systems are all affected",
+      color: "destructive"
+    },
+    {
+      icon: Eye,
+      text: "Real-time monitoring is almost impossible with human-only tracking methods",
+      color: "accent"
+    },
+    {
+      icon: Shield,
+      text: "Collisions create chain reactions → \"Kessler Syndrome\" making space unusable",
+      color: "primary"
+    },
   ];
 
   return (
@@ -72,17 +96,18 @@ const ProblemPage = () => {
       <div className="fixed inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-destructive/10 via-transparent to-transparent" />
-        {/* Floating particles */}
-        {[...Array(30)].map((_, i) => (
+        {/* Floating debris particles */}
+        {[...Array(40)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-destructive/40 rounded-full"
+            className="absolute w-1 h-1 bg-destructive/50 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
               y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
               opacity: [0.2, 0.8, 0.2],
             }}
             transition={{
@@ -105,9 +130,9 @@ const ProblemPage = () => {
           <img 
             src={earthDebrisCrisis} 
             alt="Earth surrounded by space debris" 
-            className="w-full h-[120%] object-cover opacity-60"
+            className="w-full h-[120%] object-cover opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background" />
         </motion.div>
 
         <div className="relative z-10 container mx-auto px-6 text-center">
@@ -124,7 +149,7 @@ const ProblemPage = () => {
             >
               <span className="text-foreground">THE SPACE DEBRIS</span>
               <br />
-              <span className="text-destructive drop-shadow-[0_0_30px_hsl(var(--destructive)/0.5)]">CRISIS</span>
+              <span className="text-destructive drop-shadow-[0_0_40px_hsl(var(--destructive)/0.6)]">CRISIS</span>
             </motion.h1>
             
             <motion.p 
@@ -133,8 +158,8 @@ const ProblemPage = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              Space is becoming dangerously crowded. Without immediate action, 
-              we risk losing access to orbit forever.
+              Our orbital environment is becoming dangerously crowded.
+              Without immediate action, we risk losing access to space forever.
             </motion.p>
 
             <motion.div 
@@ -147,7 +172,7 @@ const ProblemPage = () => {
                 variant="outline"
                 size="lg"
                 onClick={() => navigate('/')}
-                className="border-border/50 hover:border-primary/50"
+                className="border-border/50 hover:border-primary/50 backdrop-blur-sm"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Back to Home
@@ -170,148 +195,116 @@ const ProblemPage = () => {
             transition={{ duration: 1.5, repeat: Infinity }}
           >
             <div className="w-6 h-10 border-2 border-primary/50 rounded-full flex justify-center">
-              <div className="w-1.5 h-3 bg-primary rounded-full mt-2" />
+              <motion.div 
+                className="w-1.5 h-3 bg-primary rounded-full mt-2"
+                animate={{ y: [0, 12, 0], opacity: [1, 0.3, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              />
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="relative z-10 py-20">
+      {/* Crisis Points Section */}
+      <section className="relative z-10 py-24">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            className="text-center mb-16"
           >
-            {problemStats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="glass-card p-6 rounded-2xl text-center border border-destructive/20 hover:border-destructive/40 transition-all duration-300"
-              >
-                <div className="text-3xl md:text-4xl font-bold text-destructive mb-2 font-orbitron">
-                  {stat.value}
-                </div>
-                <div className="text-lg font-semibold text-foreground mb-1">
-                  {stat.label}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.description}
-                </div>
-              </motion.div>
-            ))}
+            <h2 className="text-3xl md:text-5xl font-bold font-orbitron mb-4">
+              <span className="text-foreground">The </span>
+              <span className="text-destructive">Crisis</span>
+              <span className="text-foreground"> is Real</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Understanding the dangers of space debris
+            </p>
           </motion.div>
-        </div>
-      </section>
 
-      {/* Crisis Explanation */}
-      <section className="relative z-10 py-20">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <div className="glass-card p-8 md:p-12 rounded-3xl border border-primary/20">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 font-orbitron">
-                <span className="text-foreground">The </span>
-                <span className="text-destructive">Danger</span>
-                <span className="text-foreground"> is Real</span>
-              </h2>
-              
-              <div className="space-y-6 text-lg text-muted-foreground">
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="flex items-start gap-3"
-                >
-                  <AlertTriangle className="w-6 h-6 text-destructive flex-shrink-0 mt-1" />
-                  <span>Even a <strong className="text-foreground">1cm object</strong> can destroy satellites due to extreme orbital velocity — traveling faster than a speeding bullet.</span>
-                </motion.p>
-                
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 }}
-                  className="flex items-start gap-3"
-                >
-                  <Users className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
-                  <span>Astronauts on the ISS face <strong className="text-foreground">increasing risk</strong> during spacewalks. The station performs emergency avoidance maneuvers multiple times per year.</span>
-                </motion.p>
-                
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
-                  className="flex items-start gap-3"
-                >
-                  <Radio className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <span><strong className="text-foreground">GPS, satellites, rockets, and communication systems</strong> are all affected. Modern life depends on safe orbital operations.</span>
-                </motion.p>
-                
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="flex items-start gap-3"
-                >
-                  <Zap className="w-6 h-6 text-destructive flex-shrink-0 mt-1" />
-                  <span>Collisions create chain reactions — the <strong className="text-foreground">"Kessler Syndrome"</strong> — making space unusable for generations.</span>
-                </motion.p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Risk Categories Grid */}
-      <section className="relative z-10 py-20">
-        <div className="container mx-auto px-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-center mb-12 font-orbitron"
-          >
-            <span className="text-foreground">Critical </span>
-            <span className="text-primary">Risk Areas</span>
-          </motion.h2>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {riskCategories.map((risk, index) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {crisisPoints.map((point, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-                whileHover={{ scale: 1.02, y: -5 }}
-                className="glass-card p-8 rounded-2xl border border-border/30 hover:border-primary/40 transition-all duration-300 group"
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.03, y: -5 }}
+                className="glass-card p-6 rounded-2xl border border-border/30 hover:border-primary/40 transition-all duration-300 group"
               >
-                <div className={`w-16 h-16 rounded-2xl bg-${risk.color}/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <risk.icon className={`w-8 h-8 text-${risk.color}`} />
+                <div className="flex items-start gap-4">
+                  <motion.div 
+                    className={`w-14 h-14 rounded-xl bg-${point.color}/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <point.icon className={`w-7 h-7 text-${point.color} drop-shadow-[0_0_10px_hsl(var(--${point.color})/0.5)]`} />
+                  </motion.div>
+                  <p className="text-foreground text-lg leading-relaxed">
+                    {point.text}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4 font-orbitron">{risk.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{risk.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Debris Growth Infographic */}
-      <section className="relative z-10 py-20">
+      {/* Risk Categories with Neon Icons */}
+      <section className="relative z-10 py-24 bg-card/30">
+        <div className="container mx-auto px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-5xl font-bold text-center mb-16 font-orbitron"
+          >
+            <span className="text-foreground">Critical </span>
+            <span className="text-primary drop-shadow-[0_0_20px_hsl(var(--primary)/0.5)]">Risk Areas</span>
+          </motion.h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {riskCategories.map((risk, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                whileHover={{ scale: 1.02 }}
+                className="glass-card p-8 rounded-3xl border border-border/30 hover:border-primary/50 transition-all duration-500 group relative overflow-hidden"
+              >
+                {/* Neon glow effect */}
+                <div className={`absolute -top-20 -right-20 w-40 h-40 bg-${risk.color}/20 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                
+                <div className="relative z-10">
+                  <div className="flex items-start gap-6 mb-6">
+                    <motion.div 
+                      className={`w-20 h-20 rounded-2xl bg-gradient-to-br from-${risk.color}/30 to-${risk.color}/10 flex items-center justify-center border border-${risk.color}/30 shadow-[0_0_30px_hsl(var(--${risk.color})/0.3)]`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <risk.icon className={`w-10 h-10 text-${risk.color} drop-shadow-[0_0_15px_hsl(var(--${risk.color})/0.8)]`} />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-foreground mb-2 font-orbitron">{risk.title}</h3>
+                      <span className={`text-sm text-${risk.color} font-semibold`}>{risk.stats}</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-muted-foreground leading-relaxed text-lg">{risk.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Animated Infographic: Debris Count Over Years */}
+      <section className="relative z-10 py-24">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -319,112 +312,164 @@ const ProblemPage = () => {
             viewport={{ once: true }}
             className="glass-card p-8 md:p-12 rounded-3xl border border-destructive/20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-orbitron">
-              <span className="text-foreground">Debris Count </span>
-              <span className="text-destructive">Over Years</span>
-            </h2>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold font-orbitron mb-4">
+                <span className="text-foreground">Debris Count </span>
+                <span className="text-destructive drop-shadow-[0_0_20px_hsl(var(--destructive)/0.5)]">Over Years</span>
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                <TrendingUp className="w-5 h-5 inline mr-2 text-destructive" />
+                Tracked objects in Earth's orbit growing exponentially
+              </p>
+            </div>
 
-            <div className="flex items-end justify-between gap-4 h-64 mb-8">
-              {debrisGrowthData.map((data, index) => (
-                <motion.div
-                  key={data.year}
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${(data.count / 42000) * 100}%` }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
-                  className="flex-1 bg-gradient-to-t from-destructive/80 to-destructive/40 rounded-t-lg relative group cursor-pointer"
+            {/* Animated Bar Chart */}
+            <div className="relative h-80 md:h-96 flex items-end justify-between gap-2 md:gap-4 px-4">
+              {/* Y-axis labels */}
+              <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground pr-2">
+                <span>42,000</span>
+                <span>30,000</span>
+                <span>20,000</span>
+                <span>10,000</span>
+                <span>0</span>
+              </div>
+
+              {/* Grid lines */}
+              <div className="absolute inset-0 ml-12 flex flex-col justify-between pointer-events-none">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <div key={i} className="border-t border-border/20 w-full" />
+                ))}
+              </div>
+
+              {/* Bars */}
+              <div className="flex items-end justify-between gap-2 md:gap-4 w-full ml-12">
+                {debrisGrowthData.map((data, index) => (
+                  <motion.div
+                    key={data.year}
+                    initial={{ height: 0, opacity: 0 }}
+                    whileInView={{ height: `${data.height}%`, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.15, duration: 0.8, ease: "easeOut" }}
+                    className="flex-1 relative group cursor-pointer"
+                  >
+                    <motion.div
+                      className="w-full bg-gradient-to-t from-destructive to-destructive/60 rounded-t-lg relative overflow-hidden"
+                      style={{ height: '100%' }}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      {/* Glow effect on hover */}
+                      <div className="absolute inset-0 bg-destructive/50 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                      
+                      {/* Animated shine effect */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-transparent"
+                        initial={{ y: '100%' }}
+                        whileInView={{ y: '-100%' }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.15 + 0.5, duration: 0.8 }}
+                      />
+                    </motion.div>
+
+                    {/* Tooltip on hover */}
+                    <div className="absolute -top-14 left-1/2 -translate-x-1/2 bg-card border border-destructive/30 rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
+                      <div className="text-destructive font-bold text-lg">{data.count.toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">objects</div>
+                    </div>
+
+                    {/* Year label */}
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-muted-foreground font-medium">
+                      {data.year}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <motion.p 
+              className="text-center text-muted-foreground mt-16 text-lg"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1.5 }}
+            >
+              <AlertTriangle className="w-5 h-5 inline mr-2 text-destructive animate-pulse" />
+              Debris count has increased <strong className="text-destructive">800x</strong> since the space age began
+            </motion.p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Why This Project is Needed */}
+      <section className="relative z-10 py-24">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 md:p-16 rounded-3xl border border-primary/30 text-center max-w-5xl mx-auto relative overflow-hidden"
+          >
+            {/* Background glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 blur-3xl rounded-full" />
+            
+            <div className="relative z-10">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 200 }}
+                className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_hsl(var(--primary)/0.5)]"
+              >
+                <Shield className="w-12 h-12 text-primary-foreground" />
+              </motion.div>
+
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 font-orbitron">
+                <span className="text-foreground">Why This Project </span>
+                <span className="text-primary drop-shadow-[0_0_20px_hsl(var(--primary)/0.5)]">is Needed</span>
+              </h2>
+              
+              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+                We need <strong className="text-foreground">immediate, autonomous, continuous cleaning</strong> — 
+                not just tracking, but active removal of debris before it's too late.
+              </p>
+
+              <div className="grid md:grid-cols-3 gap-6 mb-10">
+                <motion.div 
+                  className="glass-card p-6 rounded-2xl border border-primary/20"
                   whileHover={{ scale: 1.05 }}
                 >
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-sm font-bold text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
-                    {data.count.toLocaleString()}
-                  </div>
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-muted-foreground">
-                    {data.year}
-                  </div>
+                  <div className="text-3xl font-bold text-primary mb-2 font-orbitron">Immediate</div>
+                  <p className="text-muted-foreground">Action needed now before Kessler Syndrome becomes irreversible</p>
                 </motion.div>
-              ))}
-            </div>
-
-            <p className="text-center text-muted-foreground mt-12">
-              <TrendingUp className="w-5 h-5 inline mr-2 text-destructive" />
-              Debris count has increased <strong className="text-foreground">800x</strong> since the space age began
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Kessler Syndrome Warning */}
-      <section className="relative z-10 py-20">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="glass-card p-8 md:p-12 rounded-3xl border border-destructive/30 bg-destructive/5"
-          >
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <Shield className="w-12 h-12 text-destructive" />
-              <h2 className="text-3xl md:text-4xl font-bold font-orbitron">
-                <span className="text-destructive">Kessler Syndrome</span>
-              </h2>
-            </div>
-
-            <p className="text-center text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              The nightmare scenario: a cascading chain reaction of collisions that could make space 
-              <strong className="text-foreground"> unusable for centuries</strong>.
-            </p>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {kesslerFacts.map((fact, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center gap-3 p-4 bg-background/50 rounded-xl border border-destructive/20"
+                <motion.div 
+                  className="glass-card p-6 rounded-2xl border border-accent/20"
+                  whileHover={{ scale: 1.05 }}
                 >
-                  <div className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
-                  <span className="text-sm text-muted-foreground">{fact}</span>
+                  <div className="text-3xl font-bold text-accent mb-2 font-orbitron">Autonomous</div>
+                  <p className="text-muted-foreground">AI-powered robots working 24/7 without human risk</p>
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                <motion.div 
+                  className="glass-card p-6 rounded-2xl border border-primary/20"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="text-3xl font-bold text-primary mb-2 font-orbitron">Continuous</div>
+                  <p className="text-muted-foreground">Non-stop operation for long-term orbital safety</p>
+                </motion.div>
+              </div>
 
-      {/* Call to Action */}
-      <section className="relative z-10 py-20 pb-32">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="glass-card p-12 rounded-3xl border border-primary/30 text-center max-w-4xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-orbitron">
-              <span className="text-foreground">Why This Project </span>
-              <span className="text-primary">is Needed</span>
-            </h2>
-            
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              We need <strong className="text-foreground">immediate, autonomous, continuous cleaning</strong> — 
-              not just tracking, but active removal of debris before it's too late.
-            </p>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                size="lg"
-                onClick={() => navigate('/solution')}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-10 py-6 shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Discover Our Solution
-                <ArrowRight className="w-6 h-6 ml-3" />
-              </Button>
-            </motion.div>
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/solution')}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-xl px-12 py-7 shadow-[0_0_50px_hsl(var(--primary)/0.5)] font-orbitron"
+                >
+                  Discover Our Solution
+                  <ArrowRight className="w-6 h-6 ml-3" />
+                </Button>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
