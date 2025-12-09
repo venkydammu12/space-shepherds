@@ -1,309 +1,442 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Satellite, Zap, ArrowLeft, ArrowRight } from 'lucide-react';
+import { 
+  AlertTriangle, Satellite, Zap, ArrowLeft, ArrowRight, 
+  Radio, Users, DollarSign, Globe, TrendingUp, Shield
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { useRef } from 'react';
 import Navbar from '@/components/Navbar';
+import earthDebrisCrisis from '@/assets/earth-debris-crisis.jpg';
 
 const ProblemPage = () => {
   const navigate = useNavigate();
-  const earthRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene>();
-  const rendererRef = useRef<THREE.WebGLRenderer>();
-
-  useEffect(() => {
-    if (!earthRef.current) return;
-
-    // Three.js scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
-    renderer.setSize(600, 600);
-    renderer.setClearColor(0x000000, 0);
-    earthRef.current.appendChild(renderer.domElement);
-
-    // Earth
-    const earthGeometry = new THREE.SphereGeometry(2, 32, 32);
-    const earthMaterial = new THREE.MeshPhongMaterial({
-      color: 0x4a90e2,
-      shininess: 100,
-      transparent: true,
-      opacity: 0.8
-    });
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    scene.add(earth);
-
-    // Debris field
-    const debrisGroup = new THREE.Group();
-    const debrisTypes = [
-      { color: 0xff6b6b, size: 0.02 }, // Metallic
-      { color: 0x4ecdc4, size: 0.015 }, // Plastic  
-      { color: 0xffe66d, size: 0.025 }, // Electronic
-    ];
-
-    for (let i = 0; i < 200; i++) {
-      const type = debrisTypes[Math.floor(Math.random() * debrisTypes.length)];
-      const geometry = new THREE.SphereGeometry(type.size, 8, 8);
-      const material = new THREE.MeshBasicMaterial({ 
-        color: type.color,
-        transparent: true,
-        opacity: 0.8
-      });
-      const debris = new THREE.Mesh(geometry, material);
-      
-      // Position debris around Earth
-      const distance = 2.5 + Math.random() * 1.5;
-      const phi = Math.random() * Math.PI * 2;
-      const theta = Math.random() * Math.PI;
-      
-      debris.position.x = distance * Math.sin(theta) * Math.cos(phi);
-      debris.position.y = distance * Math.sin(theta) * Math.sin(phi); 
-      debris.position.z = distance * Math.cos(theta);
-      
-      debris.userData = { 
-        orbitSpeed: 0.01 + Math.random() * 0.02,
-        distance,
-        phi,
-        theta
-      };
-      
-      debrisGroup.add(debris);
-    }
-    scene.add(debrisGroup);
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-    scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    camera.position.z = 8;
-
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-      
-      earth.rotation.y += 0.005;
-      
-      // Animate debris orbits
-      debrisGroup.children.forEach((debris, index) => {
-        const userData = debris.userData;
-        userData.phi += userData.orbitSpeed;
-        
-        debris.position.x = userData.distance * Math.sin(userData.theta) * Math.cos(userData.phi);
-        debris.position.y = userData.distance * Math.sin(userData.theta) * Math.sin(userData.phi);
-        debris.position.z = userData.distance * Math.cos(userData.theta);
-        
-        debris.rotation.x += 0.01;
-        debris.rotation.y += 0.01;
-      });
-      
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    sceneRef.current = scene;
-    rendererRef.current = renderer;
-
-    return () => {
-      if (earthRef.current && renderer.domElement) {
-        earthRef.current.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-    };
-  }, []);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   const problemStats = [
-    { value: "34,000+", label: "Trackable Objects", icon: AlertTriangle, color: "destructive" },
-    { value: "900,000", label: "1-10cm Pieces", icon: Satellite, color: "accent" },
-    { value: "130M", label: "Smaller Fragments", icon: Zap, color: "primary" },
+    { value: "34,000+", label: "Tracked Objects", description: "Large debris in orbit" },
+    { value: "900,000", label: "1-10cm Pieces", description: "Untracked fragments" },
+    { value: "130M+", label: "Tiny Fragments", description: "Microscopic debris" },
+    { value: "17,500", label: "MPH Speed", description: "Average debris velocity" },
+  ];
+
+  const debrisGrowthData = [
+    { year: "1960", count: 50 },
+    { year: "1980", count: 5000 },
+    { year: "2000", count: 12000 },
+    { year: "2010", count: 22000 },
+    { year: "2020", count: 34000 },
+    { year: "2024", count: 42000 },
+  ];
+
+  const riskCategories = [
+    {
+      icon: Satellite,
+      title: "Risk to Satellites",
+      description: "Navigation, communication, weather, and defense satellites face constant collision threats. GPS, internet, and military systems depend on safe orbital operations.",
+      color: "primary"
+    },
+    {
+      icon: Users,
+      title: "Risk to ISS & Astronauts",
+      description: "Spacewalks become increasingly dangerous. ISS performs emergency maneuvers multiple times per year. Human lives are at stake during every mission.",
+      color: "destructive"
+    },
+    {
+      icon: DollarSign,
+      title: "Economic Damage",
+      description: "Billions lost yearly in satellite damage, mission delays, and insurance costs. Space industry valued at $400B+ is under threat.",
+      color: "accent"
+    },
+    {
+      icon: Globe,
+      title: "Global Safety Issue",
+      description: "Affects all nations. Debris doesn't respect borders. International cooperation essential but insufficient without active cleanup.",
+      color: "primary"
+    },
+  ];
+
+  const kesslerFacts = [
+    "A single collision creates thousands of new debris pieces",
+    "Chain reactions can make orbits unusable for centuries",
+    "Low Earth Orbit most at risk - where most satellites operate",
+    "Current tracking cannot detect objects smaller than 10cm",
+    "Debris travels 10x faster than a bullet",
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div className="fixed inset-0 bg-gradient-cosmic" />
-      <Navbar />
-      
-      {/* Navigation */}
-      <div className="fixed top-8 left-8 right-8 z-40 flex justify-between items-center">
-        <Button
-          variant="outline"
-          onClick={() => navigate('/')}
-          className="border-primary/30"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
-        </Button>
-        
-        <div className="text-sm text-muted-foreground">Problem Analysis</div>
-        
-        <Button
-          onClick={() => navigate('/solution')}
-          className="bg-primary hover:bg-primary/90 text-black"
-        >
-          View Solution
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
+    <div ref={containerRef} className="min-h-screen relative overflow-x-hidden bg-background">
+      {/* Animated Background */}
+      <div className="fixed inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-destructive/10 via-transparent to-transparent" />
+        {/* Floating particles */}
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-destructive/40 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 0.8, 0.2],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
       </div>
 
-      <div className="relative z-10 pt-24 pb-16">
-        <div className="container mx-auto px-6">
-          {/* Header */}
+      <Navbar />
+
+      {/* Hero Section with Parallax Image */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <motion.div 
+          className="absolute inset-0 z-0"
+          style={{ y: parallaxY }}
+        >
+          <img 
+            src={earthDebrisCrisis} 
+            alt="Earth surrounded by space debris" 
+            className="w-full h-[120%] object-cover opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
+        </motion.div>
+
+        <div className="relative z-10 container mx-auto px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
+            transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold hero-title mb-6">
-              THE SPACE DEBRIS
+            <motion.h1 
+              className="text-5xl md:text-8xl font-bold mb-6 font-orbitron"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <span className="text-foreground">THE SPACE DEBRIS</span>
               <br />
-              <span className="text-destructive">CRISIS</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our orbital environment is becoming increasingly dangerous, 
-              threatening the future of space exploration and satellite communications.
-            </p>
-          </motion.div>
-
-          {/* Main Content */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
-            {/* 3D Visualization */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="relative"
+              <span className="text-destructive drop-shadow-[0_0_30px_hsl(var(--destructive)/0.5)]">CRISIS</span>
+            </motion.h1>
+            
+            <motion.p 
+              className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
             >
-              <div className="glass-card p-8 rounded-3xl">
-                <h2 className="text-2xl font-bold text-primary mb-4 text-center">
-                  Live Debris Field Simulation
-                </h2>
-                <div 
-                  ref={earthRef}
-                  className="w-full h-[600px] flex items-center justify-center"
-                />
-                <div className="mt-4 flex justify-center gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-destructive rounded-full" />
-                    <span>Metallic Debris</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-primary rounded-full" />
-                    <span>Plastic Debris</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-accent rounded-full" />
-                    <span>Electronic Debris</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              Space is becoming dangerously crowded. Without immediate action, 
+              we risk losing access to orbit forever.
+            </motion.p>
 
-            {/* Problem Details */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="space-y-8"
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
             >
-              <div className="glass-card p-8 rounded-2xl">
-                <h3 className="text-2xl font-bold text-accent mb-6">Critical Challenges</h3>
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-destructive/20 flex items-center justify-center">
-                      <AlertTriangle className="w-6 h-6 text-destructive" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg mb-2">Collision Risk</h4>
-                      <p className="text-muted-foreground">
-                        Objects travel at 17,500 mph - even tiny fragments can destroy satellites
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                      <Satellite className="w-6 h-6 text-accent" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg mb-2">Cascading Effect</h4>
-                      <p className="text-muted-foreground">
-                        Each collision creates thousands of new debris pieces
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg mb-2">Mission Threats</h4>
-                      <p className="text-muted-foreground">
-                        ISS regularly performs avoidance maneuvers, disrupting operations
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Statistics */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="grid md:grid-cols-3 gap-8 mb-16"
-          >
-            {problemStats.map((stat, index) => (
-              <div key={index} className="glass-card p-8 rounded-2xl text-center">
-                <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-${stat.color}/20`}>
-                  <stat.icon className={`w-8 h-8 text-${stat.color}`} />
-                </div>
-                <div className={`text-4xl font-bold text-${stat.color} mb-2`}>
-                  {stat.value}
-                </div>
-                <div className="text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="text-center"
-          >
-            <div className="glass-card p-12 rounded-3xl max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold hero-title mb-6">
-                The Time to Act is NOW
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Without immediate action, we risk losing access to space entirely. 
-                Our AI Swarm Robotics solution offers a path forward.
-              </p>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate('/')}
+                className="border-border/50 hover:border-primary/50"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back to Home
+              </Button>
               <Button
                 size="lg"
                 onClick={() => navigate('/solution')}
-                className="bg-primary hover:bg-primary/90 text-black font-bold px-8 py-4 text-lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_30px_hsl(var(--primary)/0.4)]"
               >
-                Discover Our Solution
+                View Our Solution
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="absolute bottom-10 left-1/2 -translate-x-1/2"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <div className="w-6 h-10 border-2 border-primary/50 rounded-full flex justify-center">
+              <div className="w-1.5 h-3 bg-primary rounded-full mt-2" />
             </div>
           </motion.div>
         </div>
-      </div>
+      </section>
+
+      {/* Statistics Section */}
+      <section className="relative z-10 py-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+          >
+            {problemStats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="glass-card p-6 rounded-2xl text-center border border-destructive/20 hover:border-destructive/40 transition-all duration-300"
+              >
+                <div className="text-3xl md:text-4xl font-bold text-destructive mb-2 font-orbitron">
+                  {stat.value}
+                </div>
+                <div className="text-lg font-semibold text-foreground mb-1">
+                  {stat.label}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {stat.description}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Crisis Explanation */}
+      <section className="relative z-10 py-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="glass-card p-8 md:p-12 rounded-3xl border border-primary/20">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 font-orbitron">
+                <span className="text-foreground">The </span>
+                <span className="text-destructive">Danger</span>
+                <span className="text-foreground"> is Real</span>
+              </h2>
+              
+              <div className="space-y-6 text-lg text-muted-foreground">
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="flex items-start gap-3"
+                >
+                  <AlertTriangle className="w-6 h-6 text-destructive flex-shrink-0 mt-1" />
+                  <span>Even a <strong className="text-foreground">1cm object</strong> can destroy satellites due to extreme orbital velocity — traveling faster than a speeding bullet.</span>
+                </motion.p>
+                
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="flex items-start gap-3"
+                >
+                  <Users className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
+                  <span>Astronauts on the ISS face <strong className="text-foreground">increasing risk</strong> during spacewalks. The station performs emergency avoidance maneuvers multiple times per year.</span>
+                </motion.p>
+                
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="flex items-start gap-3"
+                >
+                  <Radio className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <span><strong className="text-foreground">GPS, satellites, rockets, and communication systems</strong> are all affected. Modern life depends on safe orbital operations.</span>
+                </motion.p>
+                
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="flex items-start gap-3"
+                >
+                  <Zap className="w-6 h-6 text-destructive flex-shrink-0 mt-1" />
+                  <span>Collisions create chain reactions — the <strong className="text-foreground">"Kessler Syndrome"</strong> — making space unusable for generations.</span>
+                </motion.p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Risk Categories Grid */}
+      <section className="relative z-10 py-20">
+        <div className="container mx-auto px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-center mb-12 font-orbitron"
+          >
+            <span className="text-foreground">Critical </span>
+            <span className="text-primary">Risk Areas</span>
+          </motion.h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {riskCategories.map((risk, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                className="glass-card p-8 rounded-2xl border border-border/30 hover:border-primary/40 transition-all duration-300 group"
+              >
+                <div className={`w-16 h-16 rounded-2xl bg-${risk.color}/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <risk.icon className={`w-8 h-8 text-${risk.color}`} />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-4 font-orbitron">{risk.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{risk.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Debris Growth Infographic */}
+      <section className="relative z-10 py-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 md:p-12 rounded-3xl border border-destructive/20"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-orbitron">
+              <span className="text-foreground">Debris Count </span>
+              <span className="text-destructive">Over Years</span>
+            </h2>
+
+            <div className="flex items-end justify-between gap-4 h-64 mb-8">
+              {debrisGrowthData.map((data, index) => (
+                <motion.div
+                  key={data.year}
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${(data.count / 42000) * 100}%` }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
+                  className="flex-1 bg-gradient-to-t from-destructive/80 to-destructive/40 rounded-t-lg relative group cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-sm font-bold text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
+                    {data.count.toLocaleString()}
+                  </div>
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-muted-foreground">
+                    {data.year}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <p className="text-center text-muted-foreground mt-12">
+              <TrendingUp className="w-5 h-5 inline mr-2 text-destructive" />
+              Debris count has increased <strong className="text-foreground">800x</strong> since the space age began
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Kessler Syndrome Warning */}
+      <section className="relative z-10 py-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 md:p-12 rounded-3xl border border-destructive/30 bg-destructive/5"
+          >
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <Shield className="w-12 h-12 text-destructive" />
+              <h2 className="text-3xl md:text-4xl font-bold font-orbitron">
+                <span className="text-destructive">Kessler Syndrome</span>
+              </h2>
+            </div>
+
+            <p className="text-center text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              The nightmare scenario: a cascading chain reaction of collisions that could make space 
+              <strong className="text-foreground"> unusable for centuries</strong>.
+            </p>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {kesslerFacts.map((fact, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-center gap-3 p-4 bg-background/50 rounded-xl border border-destructive/20"
+                >
+                  <div className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
+                  <span className="text-sm text-muted-foreground">{fact}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="relative z-10 py-20 pb-32">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-12 rounded-3xl border border-primary/30 text-center max-w-4xl mx-auto"
+          >
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 font-orbitron">
+              <span className="text-foreground">Why This Project </span>
+              <span className="text-primary">is Needed</span>
+            </h2>
+            
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              We need <strong className="text-foreground">immediate, autonomous, continuous cleaning</strong> — 
+              not just tracking, but active removal of debris before it's too late.
+            </p>
+
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                size="lg"
+                onClick={() => navigate('/solution')}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-10 py-6 shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
+              >
+                Discover Our Solution
+                <ArrowRight className="w-6 h-6 ml-3" />
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="relative z-10 py-8 border-t border-border/30">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-muted-foreground">
+            © 2025 AI Swarm Robotics — Securing the Future of Space Exploration.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
