@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import StarField from '@/components/StarField';
 import Navbar from '@/components/Navbar';
 import logoMain from '@/assets/logo-main.png';
+import SpaceRobotMap from '@/components/SpaceRobotMap';
 import { 
   Bot, 
   Map, 
@@ -197,28 +198,7 @@ const Dashboard = () => {
 
           {/* Space Map */}
           <TabsContent value="map">
-            <div className="dashboard-panel min-h-[500px] flex items-center justify-center">
-              <div className="text-center">
-                <div className="relative w-64 h-64 mx-auto mb-8">
-                  {/* Earth */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-green-500 shadow-lg">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-white/20" />
-                  </div>
-                  
-                  {/* Orbit Rings */}
-                  <div className="absolute inset-0 rounded-full border border-primary/30 animate-pulse" />
-                  <div className="absolute inset-8 rounded-full border border-primary/20" />
-                  <div className="absolute inset-16 rounded-full border border-primary/10" />
-                  
-                  {/* Orbiting Objects */}
-                  <div className="absolute w-3 h-3 bg-primary rounded-full animate-orbit" style={{ animationDuration: '10s' }} />
-                  <div className="absolute w-2 h-2 bg-accent rounded-full animate-orbit" style={{ animationDuration: '15s', animationDelay: '-5s' }} />
-                  <div className="absolute w-2 h-2 bg-destructive rounded-full animate-orbit" style={{ animationDuration: '8s', animationDelay: '-3s' }} />
-                </div>
-                <p className="font-orbitron text-lg text-primary mb-2">Real-Time Space Map</p>
-                <p className="font-inter text-muted-foreground">Tracking satellites, debris, and robot paths</p>
-              </div>
-            </div>
+            <SpaceRobotMap />
           </TabsContent>
 
           {/* Debris Scanner */}
