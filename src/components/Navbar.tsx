@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -60,6 +60,10 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
+          <div className="relative">
+            <Rocket className="w-8 h-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
+            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+          </div>
           <img 
             src={logoMain} 
             alt="AI Swarm Robotics" 
