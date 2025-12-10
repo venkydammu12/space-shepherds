@@ -47,7 +47,7 @@ const HeroSection = () => {
           <Button 
             variant="outline" 
             size="lg"
-            className="border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8 py-4"
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-4"
             onClick={() => scrollToSection('solution')}
           >
             View Solution Loop
