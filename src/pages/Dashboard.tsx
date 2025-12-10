@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import StarField from '@/components/StarField';
 import Navbar from '@/components/Navbar';
+import logoMain from '@/assets/logo-main.png';
 import { 
   Bot, 
   Map, 
@@ -101,13 +102,20 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 pt-24 pb-12 relative z-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div>
-            <h1 className="font-orbitron text-3xl md:text-4xl font-bold gradient-text mb-2">
-              Mission Control Center
-            </h1>
-            <p className="font-inter text-muted-foreground">
-              Welcome back, {user?.email}
-            </p>
+          <div className="flex items-center gap-4">
+            <img 
+              src={logoMain} 
+              alt="AI Swarm Robotics" 
+              className="h-16 w-auto"
+            />
+            <div>
+              <h1 className="font-orbitron text-3xl md:text-4xl font-bold gradient-text mb-2">
+                Mission Control Center
+              </h1>
+              <p className="font-inter text-muted-foreground">
+                Welcome back, {user?.email}
+              </p>
+            </div>
           </div>
           <Button
             onClick={handleLogout}
