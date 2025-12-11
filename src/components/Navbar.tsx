@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Menu, X, LogIn, Rocket } from 'lucide-react';
+import { Menu, X, LogIn, Rocket, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import logoMain from '@/assets/logo-main.png';
@@ -17,6 +18,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [logoPreviewOpen, setLogoPreviewOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -59,17 +61,62 @@ export const Navbar = () => {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="relative">
+        <div className="flex items-center gap-3 group">
+          <Link to="/" className="relative">
             <Rocket className="w-8 h-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
             <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-          </div>
-          <img 
-            src={logoMain} 
-            alt="AI Swarm Robotics" 
-            className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
-          />
-        </Link>
+          </Link>
+          
+          <Dialog open={logoPreviewOpen} onOpenChange={setLogoPreviewOpen}>
+            <DialogTrigger asChild>
+              <button className="focus:outline-none cursor-pointer">
+                <img 
+                  src={logoMain} 
+                  alt="AI Swarm Robotics" 
+                  className="h-12 w-auto transition-transform duration-300 hover:scale-105"
+                />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg bg-background/95 backdrop-blur-xl border border-primary/30 p-0 overflow-hidden">
+              <div className="relative">
+                {/* Animated background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/10" />
+                <div className="absolute top-4 right-4">
+                  <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+                </div>
+                <div className="absolute bottom-4 left-4">
+                  <Sparkles className="w-4 h-4 text-accent animate-pulse" style={{ animationDelay: '0.5s' }} />
+                </div>
+                
+                {/* Logo container */}
+                <div className="relative p-8 flex flex-col items-center">
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full scale-150 animate-pulse" />
+                    <img 
+                      src={logoMain} 
+                      alt="AI Swarm Robotics Logo" 
+                      className="relative w-64 h-auto drop-shadow-[0_0_30px_rgba(0,234,255,0.5)] animate-scale-in"
+                    />
+                  </div>
+                  
+                  {/* Info section */}
+                  <div className="text-center space-y-3">
+                    <h3 className="font-orbitron text-xl text-primary tracking-wider">
+                      AI SWARM ROBOTICS
+                    </h3>
+                    <p className="font-space text-sm text-muted-foreground max-w-xs">
+                      Autonomous Space Debris Cleanup Mission
+                    </p>
+                    <div className="flex items-center justify-center gap-2 pt-2">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="font-inter text-xs text-primary/80">Mission Active</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-8">
