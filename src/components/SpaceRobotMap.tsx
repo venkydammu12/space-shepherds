@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Rocket, Circle, Target, Home, Zap } from 'lucide-react';
+import { Rocket, Circle, Target, Home, Zap, Box, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import SpaceRobotMap3D from './SpaceRobotMap3D';
 
 interface Position {
   x: number;
   y: number;
 }
 
-interface Debris {
+export interface Debris {
   id: string;
   position: Position;
   collected: boolean;
@@ -15,7 +16,7 @@ interface Debris {
   size: number;
 }
 
-interface Robot {
+export interface Robot {
   id: string;
   position: Position;
   target: Position | null;
@@ -54,6 +55,7 @@ const SpaceRobotMap = () => {
   const [collectedCount, setCollectedCount] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [view3D, setView3D] = useState(false);
 
   const addLog = useCallback((message: string) => {
     setLogs(prev => [message, ...prev].slice(0, 10));
@@ -216,6 +218,27 @@ const SpaceRobotMap = () => {
           </Button>
         </div>
         <div className="flex items-center gap-6">
+          {/* View Toggle */}
+          <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+            <Button
+              variant={!view3D ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setView3D(false)}
+              className={`h-7 px-3 ${!view3D ? 'btn-primary-glow' : ''}`}
+            >
+              <Grid2X2 className="w-4 h-4 mr-1" />
+              2D
+            </Button>
+            <Button
+              variant={view3D ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setView3D(true)}
+              className={`h-7 px-3 ${view3D ? 'btn-primary-glow' : ''}`}
+            >
+              <Box className="w-4 h-4 mr-1" />
+              3D
+            </Button>
+          </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
             <span className="font-space text-sm text-muted-foreground">
@@ -232,6 +255,10 @@ const SpaceRobotMap = () => {
       </div>
 
       {/* Map Container */}
+      {/* 3D View */}
+      {view3D ? (
+        <SpaceRobotMap3D robots={robots} debris={debris} motherStation={MOTHER_STATION} />
+      ) : (
       <div className="relative aspect-[16/9] glass-card rounded-xl overflow-hidden border border-primary/30">
         {/* Grid Lines */}
         <div className="absolute inset-0 opacity-20">
@@ -365,6 +392,7 @@ const SpaceRobotMap = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Live Logs */}
       <div className="glass-card rounded-lg p-4">
